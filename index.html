@@ -3,159 +3,242 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chingshin Games</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<title>Code Cat Arcade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'Nunito', sans-serif;
-    background: #F0F4F8;
+    font-family: 'Inter', sans-serif;
     min-height: 100vh;
-    color: #1a1a2e;
+    color: #0D1B3E;
+    background-color: #FAF8F4;
+    background-image: radial-gradient(circle, #C8C0B0 1px, transparent 1px);
+    background-size: 24px 24px;
+    display: flex;
+    flex-direction: column;
   }
 
   /* ── HEADER ── */
   .header {
-    background: white;
-    border-bottom: 1px solid #E5E9EE;
-    padding: 1.25rem 2rem;
+    background: #0D1B3E;
+    padding: 0 2.5rem;
+    height: 60px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     position: sticky;
     top: 0;
     z-index: 10;
   }
-  .logo { font-size: 24px; font-weight: 900; letter-spacing: -0.5px; }
-  .logo span { color: #1D9E75; }
-  .logo-sub { font-size: 12px; font-weight: 700; color: #AAB; letter-spacing: 0.5px; text-transform: uppercase; }
-  .header-right { font-size: 13px; color: #BBC; font-weight: 600; text-align: right; }
+  .logo {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: -0.3px;
+    color: white;
+  }
+  .logo span { color: #5B9FFF; }
+
+  /* ── HERO ── */
+  .hero {
+    background: #1E5DBE;
+    padding: 1.25rem 2.5rem;
+  }
+  .hero h1 {
+    font-size: 22px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.3px;
+  }
+  .hero p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+    margin-top: 4px;
+  }
 
   /* ── MAIN ── */
-  .main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-
-  /* ── CATEGORY TABS ── */
-  .cat-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2rem; }
-  .cat-tab {
-    padding: 8px 18px;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: 800;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: all 0.15s;
-    background: white;
-    color: #888;
-    border-color: #E5E9EE;
+  .main {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 3rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
   }
-  .cat-tab:hover { border-color: #BBC; color: #555; }
-  .cat-tab.active { color: white; border-color: transparent; }
-  .cat-tab[data-cat="all"].active    { background: #1a1a2e; }
-  .cat-tab[data-cat="ela"].active    { background: #534AB7; }
-  .cat-tab[data-cat="math"].active   { background: #3B6D11; }
-  .cat-tab[data-cat="science"].active { background: #0F6E56; }
-  .cat-tab[data-cat="social"].active  { background: #854F0B; }
-  .cat-tab[data-cat="mixed"].active   { background: #A32D2D; }
 
-  /* ── SECTION HEADER ── */
+  /* ── SECTION ── */
   .section-header {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 10px;
-    margin-bottom: 1rem;
-    margin-top: 0.5rem;
+    margin-bottom: 1.1rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid rgba(13,27,62,0.1);
   }
-  .section-title { font-size: 18px; font-weight: 900; color: #1a1a2e; }
-  .section-count { font-size: 13px; font-weight: 700; color: #BBC; background: #F0F4F8; padding: 3px 10px; border-radius: 20px; }
+  .section-icon { font-size: 18px; }
+  .section-title {
+    font-size: 19px;
+    font-weight: 800;
+    color: #0D1B3E;
+    letter-spacing: -0.3px;
+  }
+  .section-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: #9AA3B8;
+    background: rgba(13,27,62,0.07);
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-left: auto;
+  }
 
   /* ── GRID ── */
   .activities-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.1rem;
   }
 
-  /* ── ACTIVITY CARD ── */
+  /* ── CARD ── */
   .activity-card {
     background: white;
     border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 8px rgba(13,27,62,0.07), 0 0 0 1px rgba(13,27,62,0.06);
     display: flex;
     flex-direction: column;
     transition: transform 0.15s, box-shadow 0.15s;
   }
-  .activity-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
-  .activity-card.placeholder { opacity: 0.45; }
+  .activity-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(13,27,62,0.13), 0 0 0 1px rgba(13,27,62,0.06);
+  }
 
-  .card-top { padding: 1.25rem 1.25rem 1rem; flex: 1; }
-  .card-cat-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-  .card-badge { font-size: 11px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; }
-  .badge-ela     { background: #EEEDFE; color: #3C3489; }
-  .badge-math    { background: #EAF3DE; color: #27500A; }
-  .badge-science { background: #E1F5EE; color: #085041; }
-  .badge-social  { background: #FAEEDA; color: #633806; }
-  .badge-mixed   { background: #FCEBEB; color: #A32D2D; }
+  .card-stripe { height: 5px; }
+  .stripe-games { background: linear-gradient(90deg, #0D1B3E, #1E5DBE); }
+  .stripe-tools { background: linear-gradient(90deg, #92400E, #F59E0B); }
 
-  .card-status { font-size: 11px; font-weight: 700; color: #BBC; }
-  .card-status.ready { color: #1D9E75; }
+  .card-top {
+    padding: 1.4rem 1.4rem 1.1rem;
+    flex: 1;
+  }
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .card-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+  .badge-games { background: #EBF2FF; color: #1E5DBE; }
+  .badge-tools { background: #FEF3C7; color: #92400E; }
 
-  .card-title { font-size: 19px; font-weight: 900; color: #1a1a2e; margin-bottom: 6px; line-height: 1.2; }
-  .card-desc { font-size: 13px; color: #777; font-weight: 600; line-height: 1.55; }
+  .card-ready {
+    font-size: 11px;
+    font-weight: 600;
+    color: #16A34A;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .card-ready::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: #16A34A;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .card-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0D1B3E;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    letter-spacing: -0.4px;
+  }
+  .card-desc {
+    font-size: 13px;
+    color: #6B7592;
+    font-weight: 500;
+    line-height: 1.65;
+  }
 
   .card-actions {
-    padding: 0.9rem 1.25rem;
-    border-top: 1px solid #F0F4F8;
+    padding: 1.1rem 1.4rem;
+    border-top: 1px solid #F0F2F8;
     display: flex;
     gap: 8px;
   }
   .btn-play {
     flex: 1;
-    padding: 10px;
+    padding: 12px 18px;
     font-size: 14px;
-    font-weight: 800;
-    font-family: 'Nunito', sans-serif;
-    background: #1D9E75;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    background: #1E5DBE;
     color: white;
     border: none;
     border-radius: 10px;
     cursor: pointer;
     transition: background 0.15s, transform 0.1s;
   }
-  .btn-play:hover { background: #178a65; }
+  .btn-play:hover { background: #1849A0; }
   .btn-play:active { transform: scale(0.97); }
-  .btn-play:disabled { background: #C8D5CC; cursor: not-allowed; }
 
   .btn-qr {
-    padding: 10px 14px;
-    font-size: 14px;
-    font-weight: 800;
-    font-family: 'Nunito', sans-serif;
-    background: #F0F4F8;
-    color: #555;
-    border: none;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    background: #F4F5F8;
+    color: #0D1B3E;
+    border: 1px solid #E0E4F0;
     border-radius: 10px;
     cursor: pointer;
     transition: background 0.15s, transform 0.1s;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
-  .btn-qr:hover { background: #E5E9EE; }
+  .btn-qr:hover { background: #E8EAF2; }
   .btn-qr:active { transform: scale(0.97); }
-  .btn-qr:disabled { color: #CCC; cursor: not-allowed; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #0D1B3E;
+    padding: 1.1rem 2.5rem;
+  }
+  .footer-brand {
+    font-size: 14px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.2px;
+  }
+  .footer-brand span { color: #5B9FFF; }
 
   /* ── QR OVERLAY ── */
   .qr-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(10, 10, 20, 0.82);
+    background: rgba(5,10,30,0.85);
     z-index: 100;
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
+    backdrop-filter: blur(4px);
   }
   .qr-overlay.visible { display: flex; }
 
@@ -163,71 +246,106 @@
     background: white;
     border-radius: 24px;
     padding: 2.5rem 2rem 2rem;
-    max-width: 400px;
+    max-width: 380px;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.35);
     position: relative;
   }
   .qr-close {
     position: absolute;
-    top: 16px; right: 18px;
-    background: #F0F4F8;
+    top: 16px; right: 16px;
+    background: #F0F2F8;
     border: none;
-    width: 32px; height: 32px;
+    width: 30px; height: 30px;
     border-radius: 50%;
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    color: #888;
-    font-family: 'Nunito', sans-serif;
+    color: #6B7592;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
+    transition: background 0.15s;
   }
-  .qr-close:hover { background: #E5E9EE; color: #333; }
+  .qr-close:hover { background: #E3E6F0; color: #0D1B3E; }
 
-  .qr-title { font-size: 20px; font-weight: 900; color: #1a1a2e; text-align: center; }
-  .qr-subtitle { font-size: 13px; color: #999; font-weight: 600; text-align: center; margin-top: -6px; }
-  #qr-code-container { padding: 16px; background: white; border-radius: 12px; border: 2px solid #F0F4F8; }
-  .qr-instruction { font-size: 14px; font-weight: 700; color: #555; text-align: center; line-height: 1.5; }
-  .qr-url { font-size: 11px; color: #BBC; font-weight: 600; text-align: center; word-break: break-all; padding: 0 1rem; }
-
-  /* ── HIDDEN ── */
-  .hidden { display: none !important; }
+  .qr-header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #F0F2F8;
+  }
+  .qr-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #1E5DBE;
+  }
+  .qr-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0D1B3E;
+    text-align: center;
+    letter-spacing: -0.3px;
+  }
+  #qr-code-container {
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    border: 2px solid #E8EBF4;
+  }
+  .qr-instruction {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6B7592;
+    text-align: center;
+    line-height: 1.6;
+  }
+  .qr-url {
+    font-size: 10px;
+    color: #B0B8D0;
+    font-weight: 500;
+    text-align: center;
+    word-break: break-all;
+    padding: 0 1rem;
+    font-family: monospace;
+  }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div>
-    <div class="logo">Chingshin <span>Games</span></div>
-    <div class="logo-sub">Grade 2 · Teacher Hub</div>
-  </div>
-  <div class="header-right">Display on smartboard<br>Students scan QR to play</div>
+  <div class="logo">Code Cat <span>Arcade</span></div>
 </div>
 
-<div class="main">
-
- <div class="cat-tabs" id="cat-tabs">
-  <button class="cat-tab active" data-cat="all">All Activities</button>
-  <button class="cat-tab" data-cat="games">🎮 Games</button>
-  <button class="cat-tab" data-cat="tools">🛠️ Tools</button>
+<div class="hero">
+  <h1>Teacher Hub</h1>
+  <p>Choose an activity. Share the code.</p>
 </div>
 
-  <div id="activities-container"></div>
+<div class="main" id="activities-container"></div>
 
-</div>
+<footer>
+  <div class="footer-brand">Code Cat <span>Studio</span></div>
+</footer>
 
 <!-- QR OVERLAY -->
 <div class="qr-overlay" id="qr-overlay">
   <div class="qr-modal">
     <button class="qr-close" onclick="closeQR()">✕</button>
-    <div class="qr-title" id="qr-modal-title">Activity Name</div>
-    <div class="qr-subtitle">Scan with iPad camera to play</div>
+    <div class="qr-header">
+      <div class="qr-eyebrow">Scan to Play</div>
+      <div class="qr-title" id="qr-modal-title">Activity</div>
+    </div>
     <div id="qr-code-container"></div>
-    <div class="qr-instruction">Point your iPad camera at the code — tap the link that appears</div>
+    <div class="qr-instruction">Point iPad camera at the code<br>Tap the link that appears</div>
     <div class="qr-url" id="qr-url-display"></div>
   </div>
 </div>
@@ -268,65 +386,53 @@ const activities = [
 ];
 
 // ══════════════════════════════════════════════
-//  BASE URL — update this after GitHub Pages setup
+//  BASE URL
 // ══════════════════════════════════════════════
-const BASE_URL = window.location.href.replace('index.html', '').replace(/\/$/, '');
+const BASE_URL = window.location.href.replace('index.html','').replace(/\/$/,'');
 
-// ── CATEGORY CONFIG ──
-const catConfig = {
+const catConfig  = {
   games: { label: "Games", icon: "🎮" },
   tools: { label: "Tools", icon: "🛠️" },
 };
+const badgeClass  = { games: "badge-games", tools: "badge-tools" };
+const stripeClass = { games: "stripe-games", tools: "stripe-tools" };
 
-const badgeClass = {
-  games: "badge-mixed",
-  tools: "badge-science",
-};
-
-let currentCat = "all";
 let qrInstance = null;
 
-// ── RENDER ──
 function render() {
   const container = document.getElementById('activities-container');
   container.innerHTML = '';
-
-  const cats = currentCat === 'all'
-    ? Object.keys(catConfig)
-    : [currentCat];
-
-  cats.forEach(cat => {
-    const items = activities.filter(a => a.category === cat);
-    if (items.length === 0) return;
-
-    const section = document.createElement('div');
-
+  Object.keys(catConfig).forEach(cat => {
+    const items = activities.filter(a => a.category === cat && a.ready);
+    if (!items.length) return;
     const cfg = catConfig[cat];
+    const section = document.createElement('div');
     section.innerHTML = `
       <div class="section-header">
-        <div class="section-title">${cfg.icon} ${cfg.label}</div>
-        <div class="section-count">${items.length} ${items.length === 1 ? 'activity' : 'activities'}</div>
+        <span class="section-icon">${cfg.icon}</span>
+        <span class="section-title">${cfg.label}</span>
+        <span class="section-count">${items.length} ${items.length === 1 ? 'activity' : 'activities'}</span>
       </div>
       <div class="activities-grid" id="grid-${cat}"></div>
     `;
     container.appendChild(section);
-
     const grid = section.querySelector(`#grid-${cat}`);
     items.forEach(activity => {
       const card = document.createElement('div');
-      card.className = 'activity-card' + (activity.ready ? '' : ' placeholder');
+      card.className = 'activity-card';
       card.innerHTML = `
+        <div class="card-stripe ${stripeClass[activity.category]}"></div>
         <div class="card-top">
-          <div class="card-cat-row">
-            <span class="card-badge ${badgeClass[activity.category]}">${catConfig[activity.category].label}</span>
-            <span class="card-status ${activity.ready ? 'ready' : ''}">${activity.ready ? '✓ Ready' : 'Coming soon'}</span>
+          <div class="card-meta">
+            <span class="card-badge ${badgeClass[activity.category]}">${cfg.label}</span>
+            <span class="card-ready">Ready</span>
           </div>
           <div class="card-title">${activity.title}</div>
           <div class="card-desc">${activity.description}</div>
         </div>
         <div class="card-actions">
-          <button class="btn-play" onclick="playActivity('${activity.file}')" ${activity.ready ? '' : 'disabled'}>▶ Play</button>
-          <button class="btn-qr"   onclick="showQR('${activity.title}', '${activity.file}')" ${activity.ready ? '' : 'disabled'}>📱 QR</button>
+          <button class="btn-play" onclick="playActivity('${activity.file}')">▶ Play</button>
+          <button class="btn-qr" onclick="showQR('${activity.title}','${activity.file}')">📱 QR Code</button>
         </div>
       `;
       grid.appendChild(card);
@@ -334,41 +440,23 @@ function render() {
   });
 }
 
-// ── TABS ──
-document.getElementById('cat-tabs').addEventListener('click', e => {
-  const tab = e.target.closest('.cat-tab');
-  if (!tab) return;
-  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-  tab.classList.add('active');
-  currentCat = tab.dataset.cat;
-  render();
-});
+function playActivity(file) { window.open(file, '_blank'); }
 
-// ── PLAY ──
-function playActivity(file) {
-  window.open(file, '_blank');
-}
-
-// ── QR ──
 function showQR(title, file) {
   const url = BASE_URL + '/' + file;
   document.getElementById('qr-modal-title').textContent = title;
   document.getElementById('qr-url-display').textContent = url;
-
   const container = document.getElementById('qr-code-container');
   container.innerHTML = '';
-
-  if (qrInstance) { qrInstance = null; }
-
+  qrInstance = null;
   qrInstance = new QRCode(container, {
     text: url,
-    width: 220,
-    height: 220,
-    colorDark: '#1a1a2e',
+    width: 224,
+    height: 224,
+    colorDark: '#0D1B3E',
     colorLight: '#ffffff',
     correctLevel: QRCode.CorrectLevel.M
   });
-
   document.getElementById('qr-overlay').classList.add('visible');
 }
 
@@ -379,10 +467,8 @@ function closeQR() {
 document.getElementById('qr-overlay').addEventListener('click', e => {
   if (e.target === document.getElementById('qr-overlay')) closeQR();
 });
-
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeQR(); });
 
-// ── INIT ──
 render();
 </script>
 </body>
