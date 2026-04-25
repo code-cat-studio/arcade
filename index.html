@@ -210,14 +210,11 @@
 
 <div class="main">
 
-  <div class="cat-tabs" id="cat-tabs">
-    <button class="cat-tab active" data-cat="all">All Activities</button>
-    <button class="cat-tab" data-cat="ela">📖 ELA</button>
-    <button class="cat-tab" data-cat="math">🔢 Math</button>
-    <button class="cat-tab" data-cat="science">🔬 Science</button>
-    <button class="cat-tab" data-cat="social">🌍 Social Studies</button>
-    <button class="cat-tab" data-cat="mixed">🎮 Mixed Review</button>
-  </div>
+ <div class="cat-tabs" id="cat-tabs">
+  <button class="cat-tab active" data-cat="all">All Activities</button>
+  <button class="cat-tab" data-cat="games">🎮 Games</button>
+  <button class="cat-tab" data-cat="tools">🛠️ Tools</button>
+</div>
 
   <div id="activities-container"></div>
 
@@ -281,7 +278,10 @@ const catConfig = {
   tools: { label: "Tools", icon: "🛠️" },
 };
 
-const badgeClass = { ela: "badge-ela", math: "badge-math", science: "badge-science", social: "badge-social", mixed: "badge-mixed", fun: "badge-mixed", };
+const badgeClass = {
+  games: "badge-mixed",
+  tools: "badge-science",
+};
 
 let currentCat = "all";
 let qrInstance = null;
