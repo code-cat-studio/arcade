@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>SpeakEasy</title>
+<link rel="icon" type="image/x-icon" href="/arcade/favicon.ico">
+<link rel="icon" type="image/png" sizes="96x96" href="/arcade/favicon-96x96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/arcade/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #F0F4F8;
+    min-height: 100vh;
+    color: #0D1B3E;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: #0D1B3E;
+    padding: 0 1.5rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .app-header img { height: 36px; width: 36px; object-fit: contain; }
+  .app-header-title { font-size: 19px; font-weight: 900; color: white; letter-spacing: -0.3px; }
+  .app-header-title span { color: #5B9FFF; }
+  .header-student { font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.6); display: none; }
+  .header-student.visible { display: block; }
+  .header-student strong { color: white; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar { height: 5px; background: #E0E4F0; display: none; }
+  .progress-bar.visible { display: block; }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1E5DBE, #5B9FFF);
+    transition: width 0.4s ease;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; flex: 1; flex-direction: column; }
+  .screen.active { display: flex; }
+
+  /* ══════════════════════════════
+     SETUP SCREEN
+  ══════════════════════════════ */
+  #screen-setup {
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    gap: 1.25rem;
+  }
+
+  .setup-logo { font-size: 60px; margin-bottom: 4px; }
+  .setup-title { font-size: 36px; font-weight: 900; color: #0D1B3E; letter-spacing: -0.5px; }
+  .setup-title span { color: #1E5DBE; }
+
+  .setup-card {
+    width: 100%;
+    max-width: 480px;
+    background: white;
+    border-radius: 18px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(13,27,62,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .setup-label { font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #1E5DBE; }
+
+  .name-input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 22px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    border: 2px solid #E5E9EE;
+    border-radius: 12px;
+    background: #F8FAFB;
+    color: #0D1B3E;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .name-input:focus { border-color: #1E5DBE; background: white; }
+
+  .btn-begin {
+    width: 100%;
+    max-width: 480px;
+    padding: 18px;
+    font-size: 21px;
+    font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    background: #1E5DBE;
+    color: white;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    box-shadow: 0 4px 14px rgba(30,93,190,0.3);
+  }
+  .btn-begin:hover { background: #1849A0; }
+  .btn-begin:active { transform: scale(0.97); }
+
+  /* ══════════════════════════════
+     ASSESSMENT PAGES
+  ══════════════════════════════ */
+  .assess-screen {
+    align-items: center;
+    padding: 1.5rem 1.5rem 2rem;
+    gap: 1.25rem;
+    overflow-y: auto;
+  }
+
+  .page-header {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .page-eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #9AA3B8; }
+  .page-title { font-size: 30px; font-weight: 900; color: #0D1B3E; letter-spacing: -0.4px; }
+  .page-instruction { font-size: 16px; color: #6B7592; font-weight: 500; margin-top: 2px; line-height: 1.5; }
+
+  /* Category card */
+  .category-card {
+    width: 100%;
+    max-width: 680px;
+    background: white;
+    border-radius: 18px;
+    padding: 1.4rem 1.5rem;
+    box-shadow: 0 2px 10px rgba(13,27,62,0.07);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .category-label { font-size: 16px; font-weight: 800; letter-spacing: 0.3px; color: #0D1B3E; }
+
+  .option-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .option-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 18px 12px;
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    border: 2px solid #E5E9EE;
+    border-radius: 14px;
+    background: #F8FAFB;
+    color: #0D1B3E;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .option-btn:active { transform: scale(0.97); }
+  .option-btn.selected { border-color: transparent; color: white; }
+  .option-btn.selected.green  { background: #3DBE8F; }
+  .option-btn.selected.yellow { background: #F5B942; color: #412402; }
+  .option-btn.selected.red    { background: #EE7A55; }
+  .option-btn.selected.blue   { background: #1E5DBE; }
+
+  .points-badge { font-size: 13px; font-weight: 700; opacity: 0.75; display: block; margin-top: 4px; }
+
+  /* Page score */
+  .page-score-row {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .page-score-label { font-size: 16px; font-weight: 700; color: #9AA3B8; }
+  .page-score-val { font-size: 24px; font-weight: 900; color: #1E5DBE; }
+
+  .btn-next-page {
+    width: 100%;
+    max-width: 680px;
+    padding: 18px;
+    font-size: 20px;
+    font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    background: #1E5DBE;
+    color: white;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    box-shadow: 0 4px 14px rgba(30,93,190,0.3);
+  }
+  .btn-next-page:hover { background: #1849A0; }
+  .btn-next-page:active { transform: scale(0.97); }
+  .btn-next-page:disabled { background: #C8D5E8; box-shadow: none; cursor: not-allowed; }
+
+  /* ══════════════════════════════
+     SUMMARY SCREEN
+  ══════════════════════════════ */
+  #screen-summary {
+    align-items: center;
+    padding: 1.5rem 1.5rem 3rem;
+    gap: 1.25rem;
+    overflow-y: auto;
+  }
+
+  .summary-hero {
+    width: 100%;
+    max-width: 680px;
+    background: #0D1B3E;
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .summary-emoji { font-size: 56px; }
+  .summary-name { font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1px; }
+  .summary-score { font-size: 72px; font-weight: 900; color: white; line-height: 1; letter-spacing: -3px; }
+  .summary-total { font-size: 18px; font-weight: 600; color: rgba(255,255,255,0.45); margin-top: -6px; }
+  .summary-message { font-size: 20px; font-weight: 800; color: #5B9FFF; margin-top: 6px; }
+
+  .summary-breakdown { width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 10px; }
+
+  .breakdown-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.1rem 1.4rem;
+    box-shadow: 0 2px 8px rgba(13,27,62,0.07);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .breakdown-left { display: flex; flex-direction: column; gap: 4px; }
+  .breakdown-title { font-size: 17px; font-weight: 800; color: #0D1B3E; }
+  .breakdown-detail { font-size: 14px; font-weight: 500; color: #6B7592; line-height: 1.5; }
+  .breakdown-score { font-size: 30px; font-weight: 900; color: #1E5DBE; white-space: nowrap; }
+  .breakdown-score .of { font-size: 15px; font-weight: 600; color: #9AA3B8; }
+
+  .btn-new-student {
+    width: 100%;
+    max-width: 680px;
+    padding: 18px;
+    font-size: 20px;
+    font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    background: #1E5DBE;
+    color: white;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    box-shadow: 0 4px 14px rgba(30,93,190,0.3);
+  }
+  .btn-new-student:hover { background: #1849A0; }
+  .btn-new-student:active { transform: scale(0.97); }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="header-left">
+    <img src="/arcade/logo.png" alt="Code Cat">
+    <div class="app-header-title">Speak<span>Easy</span></div>
+  </div>
+  <div class="header-student" id="header-student">
+    <strong id="header-name"></strong>
+  </div>
+</div>
+
+<div class="progress-bar" id="progress-bar">
+  <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+</div>
+
+<!-- ══ SETUP ══ -->
+<div class="screen active" id="screen-setup">
+  <div class="setup-logo">🎤</div>
+  <div class="setup-title">Speak<span>Easy</span></div>
+  <div class="setup-card">
+    <div class="setup-label">Student Name</div>
+    <input class="name-input" id="student-name" type="text" placeholder="Enter name..." maxlength="24" autocomplete="off" />
+  </div>
+  <button class="btn-begin" id="btn-begin">Begin ▶</button>
+</div>
+
+<!-- ══ PAGE 1: READING ══ -->
+<div class="screen assess-screen" id="screen-p1">
+  <div class="page-header">
+    <div class="page-eyebrow">Part 1 of 4</div>
+    <div class="page-title">📖 Reading</div>
+    <div class="page-instruction">Tap a button for each part.</div>
+  </div>
+
+  <div class="category-card">
+    <div class="category-label">🔊 Volume</div>
+    <div class="option-row">
+      <button class="option-btn" data-page="1" data-cat="volume" data-val="1" data-color="yellow" onclick="selectOption(this)">
+        🔇 Too Quiet<span class="points-badge">1 pt</span>
+      </button>
+      <button class="option-btn" data-page="1" data-cat="volume" data-val="2" data-color="green" onclick="selectOption(this)">
+        📢 Good &amp; Loud<span class="points-badge">2 pts</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="category-card">
+    <div class="category-label">⏱️ Speed</div>
+    <div class="option-row">
+      <button class="option-btn" data-page="1" data-cat="speed" data-val="1" data-color="yellow" onclick="selectOption(this)">
+        🐢 Too Slow<span class="points-badge">1 pt</span>
+      </button>
+      <button class="option-btn" data-page="1" data-cat="speed" data-val="2" data-color="green" onclick="selectOption(this)">
+        👍 Just Right<span class="points-badge">2 pts</span>
+      </button>
+      <button class="option-btn" data-page="1" data-cat="speed" data-val="1" data-color="yellow" onclick="selectOption(this)">
+        ⚡ Too Fast<span class="points-badge">1 pt</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="category-card">
+    <div class="category-label">👂 Clear Speaking</div>
+    <div class="option-row">
+      <button class="option-btn" data-page="1" data-cat="clarity" data-val="0" data-color="red" onclick="selectOption(this)">
+        😕 Hard to Understand<span class="points-badge">0 pts</span>
+      </button>
+      <button class="option-btn" data-page="1" data-cat="clarity" data-val="2" data-color="green" onclick="selectOption(this)">
+        😊 Speaks Clearly<span class="points-badge">2 pts</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="page-score-row">
+    <div class="page-score-label">Reading Score</div>
+    <div class="page-score-val" id="score-p1">— / 6</div>
+  </div>
+  <button class="btn-next-page" id="btn-p1-next" onclick="nextPage(2)" disabled>Next →</button>
+</div>
+
+<!-- ══ PAGE 2: QUESTION 1 ══ -->
+<div class="screen assess-screen" id="screen-p2">
+  <div class="page-header">
+    <div class="page-eyebrow">Part 2 of 4</div>
+    <div class="page-title">💬 Question 1</div>
+    <div class="page-instruction">Tap a button for each part.</div>
+  </div>
+
+  <div class="category-card">
+    <div class="category-label">🔊 Volume</div>
+    <div class="option-row">
+      <button class="option-btn" data-page="2" data-cat="volume" data-val="0" data-color="red" onclick="selectOption(this)">
+        🔇 Too Quiet<span class="points-badge">0 pts</span>
+      </button>
+      <button class="option-btn" data-page="2" data-cat="volume" data-val="1" data-color="green" onclick="selectOption(this)">
+        📢 Good &amp; Loud<span class="points-badge">1 pt</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="category-card">
+    <div class="category-label">👂 Clear Speaking</div>
+    <div class="option-row">
+      <button class="option-btn" data-page="2" data-cat="clarity" data-val="0" data-color="red" onclick="selectOption(this)">
+        😕 Hard to Understand<span class="points-badge">0 pts</span>
+      </button>
+      <button class="option-btn" data-page="2" data-cat="clarity" data-val="1" data-color="green" onclick="selectOption(this)">
+        😊 Speaks Clearly<span class="points-badge">1 pt</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="category-card">
+    <div class="category-label">✅ Correct Answer?</div>
+    <div class="option-row">
+      <button class="option-btn" data-page="2" data-cat="accuracy" data-val="0" data-color="red" onclick="selectOption(this)">
+        ❌ No Answer<span class="points-badge">0 pts</span>
+      </button>
+      <button class="option-btn" data-page="2" data-cat="accuracy" data-val="1" data-color="yellow" onclick="selectOption(this)">
+        🤔 Almost!<span class="points-badge">1 pt</span>
+      </button>
+      <button class="option-btn" data-page="2" data-cat="accuracy" data-val="2" data-color="green" onclick="selectOption(this)">
+        ✅ Yes!<span class="points-badge">2 pts</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="page-score-row">
+    <div class="page-score-label">Question 1 Score</div>
+    <div class="page-score-val" id="score-p2">— / 4</div>
+  </div>
+  <button class="btn-next-page" id="btn-p2-next" onclick="nextPage(3)" disabled>Next →</button>
+</div>
+
+<!-- ══ PAGE 3: QUESTION 2 ══ -->
+<div class="screen assess-screen" id="screen-p3">
+  <div class="page-header">
+    <div class="page-eyebrow">Part 3 of 4</div>
+    <div class="page-title">💬 Question 2</div>
+    <div class="page-instruction">Tap a button for each part.</div>
+  </div>
+
+  <div class="category-card">
+    <div class="category-label">🔊 Volume</div>
+    <div class="option-row">
+      <button class="option-btn" data-page="3" data-cat="volume" data-val="0" data-color="red" onclick="selectOption(this)">
+        🔇 Too Quiet<span class="points-badge">0 pts</span>
+      </button>
+      <button class="option-btn" data-page="3" data-cat="volume" data-val="1" data-color="green" onclick="selectOption(this)">
+        📢 Good &amp; Loud<span class="points-badge">1 pt</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="category-card">
+    <div class="category-label">👂 Clear Speaking</div>
+    <div class="option-row">
+      <button class="option-btn" data-page="3" data-cat="clarity" data-val="0" data-color="red" onclick="selectOption(this)">
+        😕 Hard to Understand<span class="points-badge">0 pts</span>
+      </button>
+      <button class="option-btn" data-page="3" data-cat="clarity" data-val="1" data-color="green" onclick="selectOption(this)">
+        😊 Speaks Clearly<span class="points-badge">1 pt</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="category-card">
+    <div class="category-label">✅ Correct Answer?</div>
+    <div class="option-row">
+      <button class="option-btn" data-page="3" data-cat="accuracy" data-val="0" data-color="red" onclick="selectOption(this)">
+        ❌ No Answer<span class="points-badge">0 pts</span>
+      </button>
+      <button class="option-btn" data-page="3" data-cat="accuracy" data-val="1" data-color="yellow" onclick="selectOption(this)">
+        🤔 Almost!<span class="points-badge">1 pt</span>
+      </button>
+      <button class="option-btn" data-page="3" data-cat="accuracy" data-val="2" data-color="green" onclick="selectOption(this)">
+        ✅ Yes!<span class="points-badge">2 pts</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="page-score-row">
+    <div class="page-score-label">Question 2 Score</div>
+    <div class="page-score-val" id="score-p3">— / 4</div>
+  </div>
+  <button class="btn-next-page" id="btn-p3-next" onclick="nextPage(4)" disabled>Next →</button>
+</div>
+
+<!-- ══ PAGE 4: QUESTION 3 ══ -->
+<div class="screen assess-screen" id="screen-p4">
+  <div class="page-header">
+    <div class="page-eyebrow">Part 4 of 4</div>
+    <div class="page-title">💬 Question 3</div>
+    <div class="page-instruction">Tap a button for each part.</div>
+  </div>
+
+  <div class="category-card">
+    <div class="category-label">🔊 Volume</div>
+    <div class="option-row">
+      <button class="option-btn" data-page="4" data-cat="volume" data-val="0" data-color="red" onclick="selectOption(this)">
+        🔇 Too Quiet<span class="points-badge">0 pts</span>
+      </button>
+      <button class="option-btn" data-page="4" data-cat="volume" data-val="1" data-color="green" onclick="selectOption(this)">
+        📢 Good &amp; Loud<span class="points-badge">1 pt</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="category-card">
+    <div class="category-label">👂 Clear Speaking</div>
+    <div class="option-row">
+      <button class="option-btn" data-page="4" data-cat="clarity" data-val="0" data-color="red" onclick="selectOption(this)">
+        😕 Hard to Understand<span class="points-badge">0 pts</span>
+      </button>
+      <button class="option-btn" data-page="4" data-cat="clarity" data-val="1" data-color="green" onclick="selectOption(this)">
+        😊 Speaks Clearly<span class="points-badge">1 pt</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="category-card">
+    <div class="category-label">✅ Correct Answer?</div>
+    <div class="option-row">
+      <button class="option-btn" data-page="4" data-cat="accuracy" data-val="0" data-color="red" onclick="selectOption(this)">
+        ❌ No Answer<span class="points-badge">0 pts</span>
+      </button>
+      <button class="option-btn" data-page="4" data-cat="accuracy" data-val="1" data-color="yellow" onclick="selectOption(this)">
+        🤔 Almost!<span class="points-badge">1 pt</span>
+      </button>
+      <button class="option-btn" data-page="4" data-cat="accuracy" data-val="2" data-color="green" onclick="selectOption(this)">
+        ✅ Yes!<span class="points-badge">2 pts</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="page-score-row">
+    <div class="page-score-label">Question 3 Score</div>
+    <div class="page-score-val" id="score-p4">— / 4</div>
+  </div>
+  <button class="btn-next-page" id="btn-p4-next" onclick="showSummary()" disabled>See Results 🎉</button>
+</div>
+
+<!-- ══ SUMMARY ══ -->
+<div class="screen" id="screen-summary">
+  <div class="summary-hero">
+    <div class="summary-emoji" id="summary-emoji">⭐</div>
+    <div class="summary-name" id="summary-student-name"></div>
+    <div class="summary-score" id="summary-score">0</div>
+    <div class="summary-total">out of 18 points</div>
+    <div class="summary-message" id="summary-message"></div>
+  </div>
+
+  <div class="summary-breakdown" id="summary-breakdown"></div>
+
+  <button class="btn-new-student" onclick="newStudent()">Next Student →</button>
+</div>
+
+<script>
+let studentName = '';
+let grades = { 1: {}, 2: {}, 3: {}, 4: {} };
+
+const maxScores = { 1: 6, 2: 4, 3: 4, 4: 4 };
+const pageNames = { 1: 'Reading', 2: 'Question 1', 3: 'Question 2', 4: 'Question 3' };
+const pageCats  = {
+  1: ['volume', 'speed', 'clarity'],
+  2: ['volume', 'clarity', 'accuracy'],
+  3: ['volume', 'clarity', 'accuracy'],
+  4: ['volume', 'clarity', 'accuracy'],
+};
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function setProgress(pct) {
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+// ── SETUP ──
+document.getElementById('btn-begin').addEventListener('click', () => {
+  const n = document.getElementById('student-name').value.trim();
+  if (!n) { alert('Please enter the student\'s name!'); return; }
+  studentName = n;
+  document.getElementById('header-name').textContent = studentName;
+  document.getElementById('header-student').classList.add('visible');
+  document.getElementById('progress-bar').classList.add('visible');
+  grades = { 1: {}, 2: {}, 3: {}, 4: {} };
+  setProgress(0);
+  showScreen('screen-p1');
+});
+
+// ── OPTION SELECTION ──
+function selectOption(btn) {
+  const page  = parseInt(btn.dataset.page);
+  const cat   = btn.dataset.cat;
+  const val   = parseInt(btn.dataset.val);
+  const color = btn.dataset.color;
+
+  btn.closest('.option-row').querySelectorAll('.option-btn').forEach(b => {
+    b.classList.remove('selected', 'green', 'yellow', 'red', 'blue');
+  });
+
+  btn.classList.add('selected', color);
+  grades[page][cat] = val;
+  updatePageScore(page);
+  checkPageComplete(page);
+}
+
+function getPageScore(page) {
+  const cats = pageCats[page];
+  let total = 0, complete = true;
+  cats.forEach(cat => {
+    if (grades[page][cat] === undefined) { complete = false; }
+    else { total += grades[page][cat]; }
+  });
+  return { total, complete };
+}
+
+function updatePageScore(page) {
+  const { total, complete } = getPageScore(page);
+  const el = document.getElementById(`score-p${page}`);
+  if (el) el.textContent = complete ? `${total} / ${maxScores[page]}` : `— / ${maxScores[page]}`;
+}
+
+function checkPageComplete(page) {
+  const { complete } = getPageScore(page);
+  const btn = document.getElementById(`btn-p${page}-next`);
+  if (btn) btn.disabled = !complete;
+}
+
+// ── NAVIGATION ──
+function nextPage(page) {
+  const progress = { 2: 25, 3: 50, 4: 75 };
+  setProgress(progress[page] || 0);
+  showScreen(`screen-p${page}`);
+}
+
+// ── SUMMARY ──
+function showSummary() {
+  setProgress(100);
+  let total = 0;
+  const breakdownHTML = [];
+
+  [1, 2, 3, 4].forEach(page => {
+    const { total: pageTotal } = getPageScore(page);
+    total += pageTotal;
+
+    const labelMap = {
+      volume:   { 0: '🔇 Too Quiet', 1: '📢 Good & Loud', 2: '📢 Good & Loud' },
+      speed:    { 1: '🐢 Too Slow / ⚡ Too Fast', 2: '👍 Just Right' },
+      clarity:  { 0: '😕 Hard to Understand', 1: '😊 Speaks Clearly', 2: '😊 Speaks Clearly' },
+      accuracy: { 0: '❌ No Answer', 1: '🤔 Almost!', 2: '✅ Yes!' },
+    };
+
+    const details = pageCats[page].map(cat => {
+      const val = grades[page][cat];
+      return labelMap[cat]?.[val] ?? '';
+    }).filter(Boolean).join(' · ');
+
+    breakdownHTML.push(`
+      <div class="breakdown-card">
+        <div class="breakdown-left">
+          <div class="breakdown-title">${pageNames[page]}</div>
+          <div class="breakdown-detail">${details}</div>
+        </div>
+        <div class="breakdown-score">${pageTotal}<span class="of"> / ${maxScores[page]}</span></div>
+      </div>
+    `);
+  });
+
+  document.getElementById('summary-breakdown').innerHTML = breakdownHTML.join('');
+  document.getElementById('summary-student-name').textContent = studentName;
+  document.getElementById('summary-score').textContent = total;
+
+  const pct = total / 18;
+  let emoji, message;
+  if      (pct >= 0.89) { emoji = '🌟'; message = 'Wow, absolutely amazing!'; }
+  else if (pct >= 0.75) { emoji = '⭐'; message = 'You did a great job!'; }
+  else if (pct >= 0.60) { emoji = '👍'; message = 'Nice work, keep it up!'; }
+  else if (pct >= 0.45) { emoji = '💪'; message = 'Good try — keep practising!'; }
+  else                   { emoji = '📚'; message = 'Let\'s practise more together!'; }
+
+  document.getElementById('summary-emoji').textContent   = emoji;
+  document.getElementById('summary-message').textContent = message;
+
+  showScreen('screen-summary');
+}
+
+// ── NEW STUDENT ──
+function newStudent() {
+  grades = { 1: {}, 2: {}, 3: {}, 4: {} };
+  studentName = '';
+
+  document.querySelectorAll('.option-btn').forEach(b => {
+    b.classList.remove('selected', 'green', 'yellow', 'red', 'blue');
+  });
+
+  [1,2,3,4].forEach(p => {
+    const el = document.getElementById(`score-p${p}`);
+    if (el) el.textContent = `— / ${maxScores[p]}`;
+    const btn = document.getElementById(`btn-p${p}-next`);
+    if (btn) btn.disabled = true;
+  });
+
+  document.getElementById('student-name').value = '';
+  document.getElementById('header-student').classList.remove('visible');
+  document.getElementById('progress-bar').classList.remove('visible');
+  setProgress(0);
+  showScreen('screen-setup');
+}
+</script>
+</body>
+</html>
