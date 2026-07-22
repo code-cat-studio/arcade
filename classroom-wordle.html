@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Classroom Wordle</title>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<title>Wordle</title>
+<link rel="icon" type="image/x-icon" href="/arcade/favicon.ico">
+<link rel="icon" type="image/png" sizes="96x96" href="/arcade/favicon-96x96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/arcade/apple-touch-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -46,10 +46,27 @@
   /* ── SLIM HEADER ── */
   header {
     flex-shrink: 0;
-    height: 28px;
+    height: 34px;
     background: var(--accent);
     box-shadow: 0 2px 8px rgba(232,98,42,0.2);
     z-index: 10;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 5px;
+  }
+
+  .logo-tile {
+    width: 22px; height: 22px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.72rem;
+    color: #fff;
+    opacity: 0.72;
+    flex-shrink: 0;
   }
 
   /* ── SETUP SCREEN ── */
@@ -172,26 +189,11 @@
     gap: 8px;
   }
 
-  /* ── WORDLE LOGO ── */
+  /* ── WORDLE LOGO (now in header) ── */
   .wordle-logo {
-    position: absolute;
-    top: 38px;   /* just below header */
-    left: 20px;
     display: flex;
-    gap: 4px;
-    z-index: 5;
-  }
-
-  .logo-tile {
-    width: 48px; height: 48px;
-    border-radius: 9px;
-    display: flex;
+    gap: 3px;
     align-items: center;
-    justify-content: center;
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.45rem;
-    color: #fff;
-    opacity: 0.68;
   }
 
   /* ── BOARD AREA ── */
@@ -474,17 +476,16 @@
 <body>
 
 <!-- SLIM HEADER -->
-<header></header>
-
-<!-- WORDLE LOGO — shown only during game -->
-<div class="wordle-logo" id="wordle-logo" style="display:none;">
-  <div class="logo-tile" style="background:var(--gray)">W</div>
-  <div class="logo-tile" style="background:var(--yellow)">O</div>
-  <div class="logo-tile" style="background:var(--green)">R</div>
-  <div class="logo-tile" style="background:var(--gray)">D</div>
-  <div class="logo-tile" style="background:var(--green)">L</div>
-  <div class="logo-tile" style="background:var(--yellow)">E</div>
-</div>
+<header>
+  <div class="wordle-logo" id="wordle-logo" style="display:none;">
+    <div class="logo-tile" style="background:var(--gray)">W</div>
+    <div class="logo-tile" style="background:var(--yellow)">O</div>
+    <div class="logo-tile" style="background:var(--green)">R</div>
+    <div class="logo-tile" style="background:var(--gray)">D</div>
+    <div class="logo-tile" style="background:var(--green)">L</div>
+    <div class="logo-tile" style="background:var(--yellow)">E</div>
+  </div>
+</header>
 
 <!-- SETUP SCREEN -->
 <div id="setup-screen">
@@ -599,12 +600,17 @@
     initGame();
   }
 
+  function focusInput() {
+    setTimeout(() => document.getElementById('secret-input').focus(), 50);
+  }
+
   function newGame() {
     gameReady = false;
     document.getElementById('result-overlay').classList.remove('show');
     document.getElementById('setup-screen').style.display = 'flex';
     document.getElementById('game-screen').style.display = 'none';
     document.getElementById('wordle-logo').style.display = 'none';
+    focusInput();
   }
 
   function initGame() {
@@ -886,6 +892,8 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
   }
+
+  document.addEventListener('DOMContentLoaded', focusInput);
 
   window.addEventListener('resize', () => {
     if (document.getElementById('game-screen').style.display !== 'none') sizeTiles();
