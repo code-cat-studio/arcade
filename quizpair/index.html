@@ -1,1 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuizPair — Code Cat Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  body {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    color: #0D1B3E;
+    background-color: #EAF2FC;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header {
+    background: #0D1B3E;
+    padding: 1.1rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .logo { display: flex; align-items: center; }
+  .logo-text { display: flex; align-items: baseline; gap: 8px; }
+  .logo-name { font-size: 19px; font-weight: 900; letter-spacing: -0.3px; color: white; }
+  .logo-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.3px; color: #BFD7FF;
+    background: rgba(91,159,255,0.18); padding: 3px 9px; border-radius: 20px;
+  }
+  .logo-sub { font-size: 12px; color: rgba(255,255,255,0.55); font-weight: 500; margin-top: 3px; }
+  .back-link {
+    font-size: 13px; font-weight: 600; color: #BFD7FF; text-decoration: none;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .back-link:hover { color: white; }
+
+  .page-title { padding: 2rem 2rem 0; max-width: 1200px; width: 100%; margin: 0 auto; }
+  .page-title h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.4px; color: #0D1B3E; }
+  .page-title p { font-size: 13px; color: #6B7592; font-weight: 500; margin-top: 4px; }
+
+  .main {
+    max-width: 1200px; width: 100%; margin: 0 auto;
+    padding: 1.5rem 2rem 3rem; flex: 1;
+  }
+
+  .activities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 1rem;
+  }
+
+  .activity-card {
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(13,27,62,0.07), 0 0 0 1px rgba(13,27,62,0.06);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .activity-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(13,27,62,0.13), 0 0 0 1px rgba(13,27,62,0.06);
+  }
+  .card-stripe { height: 5px; background: linear-gradient(90deg, #0D1B3E, #1E5DBE); }
+  .card-top { padding: 1.1rem 1.2rem; flex: 1; }
+  .card-title {
+    font-size: 19px; font-weight: 800; color: #0D1B3E;
+    line-height: 1.2; letter-spacing: -0.4px;
+  }
+  .card-actions {
+    padding: 0.9rem 1.2rem; border-top: 1px solid #F0F2F8;
+    display: flex; gap: 8px;
+  }
+  .btn-play {
+    flex: 1; padding: 12px 18px; font-size: 14px; font-weight: 700;
+    font-family: 'Inter', sans-serif; background: #1E5DBE; color: white;
+    border: none; border-radius: 10px; cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-play:hover { background: #1849A0; }
+  .btn-play:active { transform: scale(0.97); }
+  .btn-qr {
+    padding: 12px 16px; font-size: 13px; font-weight: 700;
+    font-family: 'Inter', sans-serif; background: #F4F5F8; color: #0D1B3E;
+    border: 1px solid #E0E4F0; border-radius: 10px; cursor: pointer;
+    transition: background 0.15s, transform 0.1s; white-space: nowrap;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn-qr:hover { background: #E8EAF2; }
+  .btn-qr:active { transform: scale(0.97); }
+
+  .qr-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(5,10,30,0.85);
+    z-index: 100; align-items: center; justify-content: center; padding: 1.5rem;
+    backdrop-filter: blur(4px);
+  }
+  .qr-overlay.visible { display: flex; }
+  .qr-modal {
+    background: white; border-radius: 24px; padding: 2.5rem 2rem 2rem;
+    max-width: 380px; width: 100%; display: flex; flex-direction: column;
+    align-items: center; gap: 1rem; box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+    position: relative;
+  }
+  .qr-close {
+    position: absolute; top: 16px; right: 16px; background: #F0F2F8; border: none;
+    width: 30px; height: 30px; border-radius: 50%; font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; color: #6B7592;
+    font-family: 'Inter', sans-serif; font-weight: 700; transition: background 0.15s;
+  }
+  .qr-close:hover { background: #E3E6F0; color: #0D1B3E; }
+  .qr-header {
+    width: 100%; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding-bottom: 1rem; border-bottom: 1px solid #F0F2F8;
+  }
+  .qr-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #1E5DBE; }
+  .qr-title { font-size: 22px; font-weight: 800; color: #0D1B3E; text-align: center; letter-spacing: -0.3px; }
+  #qr-code-container { padding: 16px; background: white; border-radius: 12px; border: 2px solid #E8EBF4; }
+  .qr-instruction { font-size: 13px; font-weight: 500; color: #6B7592; text-align: center; line-height: 1.6; }
+  .qr-url {
+    font-size: 10px; color: #B0B8D0; font-weight: 500; text-align: center;
+    word-break: break-all; padding: 0 1rem; font-family: monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <img src="../logo.png" alt="Code Cat" style="height:38px; width:38px; object-fit:contain; margin-right:12px;">
+    <div>
+      <div class="logo-text">
+        <span class="logo-name">Code Cat Studio</span>
+        <span class="logo-tag">Arcade</span>
+      </div>
+      <div class="logo-sub">Versions</div>
+    </div>
+  </div>
+  <a class="back-link" href="../index.html">← Teacher Hub</a>
+</div>
+
+<div class="page-title">
+  <h1>QuizPair</h1>
+  <p>Pick the version you want to run.</p>
+</div>
+
+<div class="main">
+  <div class="activities-grid" id="activities-container"></div>
+</div>
+
+<div class="qr-overlay" id="qr-overlay">
+  <div class="qr-modal">
+    <button class="qr-close" onclick="closeQR()">✕</button>
+    <div class="qr-header">
+      <div class="qr-eyebrow">Scan to Play</div>
+      <div class="qr-title" id="qr-modal-title">Activity</div>
+    </div>
+    <div id="qr-code-container"></div>
+    <div class="qr-instruction">Point iPad camera at the code<br>Tap the link that appears</div>
+    <div class="qr-url" id="qr-url-display"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  QUIZPAIR VERSIONS — add new versions here only
+//  NOTE: "file" values below are placeholders —
+//  update them to match your actual filenames.
+// ══════════════════════════════════════════════
+const versions = [
+  {
+    title: "G2S2 Final",
+    file: "g2s2-final.html"
+  },
+  {
+    title: "QuizPair Demonstration",
+    file: "demonstration.html"
+  },
+];
+
+const BASE_URL = window.location.href.replace('index.html','').replace(/\/$/,'');
+let qrInstance = null;
+
+function render() {
+  const grid = document.getElementById('activities-container');
+  grid.innerHTML = '';
+  versions.forEach(v => {
+    const card = document.createElement('div');
+    card.className = 'activity-card';
+    card.innerHTML = `
+      <div class="card-stripe"></div>
+      <div class="card-top">
+        <div class="card-title">${v.title}</div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-play" onclick="playActivity('${v.file}')">▶ Play</button>
+        <button class="btn-qr" onclick="showQR('${v.title}','${v.file}')">📱 QR Code</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function playActivity(file) { window.open(file, '_blank'); }
+
+function showQR(title, file) {
+  const url = BASE_URL + file;
+  document.getElementById('qr-modal-title').textContent = title;
+  document.getElementById('qr-url-display').textContent = url;
+  const container = document.getElementById('qr-code-container');
+  container.innerHTML = '';
+  qrInstance = null;
+  qrInstance = new QRCode(container, {
+    text: url,
+    width: 224,
+    height: 224,
+    colorDark: '#0D1B3E',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+  document.getElementById('qr-overlay').classList.add('visible');
+}
+
+function closeQR() {
+  document.getElementById('qr-overlay').classList.remove('visible');
+}
+
+document.getElementById('qr-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('qr-overlay')) closeQR();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeQR(); });
+
+render();
+</script>
+</body>
+</html>
