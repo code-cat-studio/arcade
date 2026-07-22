@@ -4,246 +4,579 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>QuizPair</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/arcade/favicon.ico">
+<link rel="icon" type="image/png" sizes="96x96" href="/arcade/favicon-96x96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/arcade/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: 'Nunito', sans-serif; background: #F0F4F8; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 1.25rem 1rem 2rem; }
-  .app { width: 100%; max-width: 500px; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
-  .screen { width: 100%; display: none; flex-direction: column; align-items: center; gap: 1rem; }
-  .screen.active { display: flex; }
 
-  .logo { font-size: 36px; font-weight: 900; color: #1a1a2e; letter-spacing: -1px; text-align: center; margin-top: 0.5rem; }
-  .logo span { color: #1D9E75; }
-  .tagline { font-size: 14px; color: #777; font-weight: 600; text-align: center; margin-top: -4px; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #F0F4F8;
+    min-height: 100vh;
+    color: #0D1B3E;
+    display: flex;
+    flex-direction: column;
+  }
 
-  .name-card { width: 100%; background: white; border-radius: 16px; padding: 1.1rem 1.25rem; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-  .player-label { font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
-  .p1-label { color: #185FA5; }
-  .p2-label { color: #B84000; }
+  /* ── HEADER ── */
+  .app-header {
+    background: #0D1B3E;
+    padding: 0 1.5rem;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .app-header img { height: 34px; width: 34px; object-fit: contain; }
+  .app-header-title { font-size: 17px; font-weight: 900; color: white; letter-spacing: -0.3px; }
+  .app-header-title span { color: #5EEAD4; }
 
-  .name-input { width: 100%; padding: 11px 14px; font-size: 19px; font-family: 'Nunito', sans-serif; font-weight: 700; border: 2px solid #E5E9EE; border-radius: 10px; background: #F8FAFB; color: #1a1a2e; outline: none; transition: border-color 0.2s; }
+  /* ── SCREENS ── */
+  .screen { display: none; flex: 1; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ══════════════════════════════
+     SETUP SCREEN
+  ══════════════════════════════ */
+  #screen-setup {
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    gap: 1rem;
+  }
+
+  .setup-title { font-size: 32px; font-weight: 900; color: #0D1B3E; letter-spacing: -0.5px; text-align: center; }
+  .setup-sub { font-size: 16px; color: #6B7592; font-weight: 500; text-align: center; margin-top: -6px; }
+
+  .name-cards { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 10px; }
+
+  .name-card {
+    background: white;
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(13,27,62,0.07);
+  }
+  .name-card.optional { opacity: 0.7; }
+  .name-card.optional:focus-within { opacity: 1; }
+
+  .player-label { font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+  .label-p1 { color: #1E5DBE; }
+  .label-p2 { color: #B84000; }
+  .label-p3 { color: #166534; }
+  .label-optional { color: #9AA3B8; font-size: 10px; font-weight: 600; letter-spacing: 0.5px; margin-left: 6px; }
+
+  .name-input {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 18px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    border: 2px solid #E5E9EE;
+    border-radius: 10px;
+    background: #F8FAFB;
+    color: #0D1B3E;
+    outline: none;
+    transition: border-color 0.2s;
+  }
   .name-input:focus { border-color: #1D9E75; background: white; }
 
-  .btn-primary { width: 100%; padding: 17px; font-size: 20px; font-weight: 900; font-family: 'Nunito', sans-serif; background: #1D9E75; color: white; border: none; border-radius: 16px; cursor: pointer; transition: transform 0.1s, background 0.15s; box-shadow: 0 4px 12px rgba(29,158,117,0.3); }
-  .btn-primary:hover { background: #178a65; }
-  .btn-primary:active { transform: scale(0.97); }
+  .btn-start {
+    width: 100%;
+    max-width: 480px;
+    padding: 16px;
+    font-size: 19px;
+    font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    background: #1D9E75;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    box-shadow: 0 4px 12px rgba(29,158,117,0.3);
+  }
+  .btn-start:hover { background: #178A65; }
+  .btn-start:active { transform: scale(0.97); }
 
-  .handoff-wrap { width: 100%; border-radius: 20px; padding: 2rem 1.5rem; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
-  .handoff-wrap.p1 { background: #E6F2FF; }
-  .handoff-wrap.p2 { background: #FFF0E6; }
-  .handoff-icon { font-size: 44px; margin-bottom: 4px; }
-  .handoff-eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
-  .handoff-wrap.p1 .handoff-eyebrow { color: #185FA5; }
-  .handoff-wrap.p2 .handoff-eyebrow { color: #B84000; }
-  .handoff-name { font-size: 34px; font-weight: 900; line-height: 1.1; }
-  .handoff-wrap.p1 .handoff-name { color: #0C447C; }
-  .handoff-wrap.p2 .handoff-name { color: #7A2900; }
-  .handoff-role { font-size: 15px; font-weight: 700; margin-top: 2px; }
-  .handoff-wrap.p1 .handoff-role { color: #2470B8; }
-  .handoff-wrap.p2 .handoff-role { color: #D05000; }
+  /* ══════════════════════════════
+     HANDOFF SCREEN
+  ══════════════════════════════ */
+  #screen-handoff {
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    gap: 1.25rem;
+  }
 
-  .handoff-note { font-size: 14px; color: #666; font-weight: 600; text-align: center; line-height: 1.6; }
+  .handoff-banner {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  .handoff-banner.p1 { background: #E6F2FF; }
+  .handoff-banner.p2 { background: #FFF0E6; }
+  .handoff-banner.p3 { background: #ECFDF5; }
 
-  .scores-bar { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .score-card { background: white; border-radius: 14px; padding: 12px 10px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
-  .score-name { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; }
-  .score-name.p1 { color: #185FA5; }
+  .handoff-icon { font-size: 48px; margin-bottom: 4px; }
+  .handoff-eyebrow { font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+  .handoff-banner.p1 .handoff-eyebrow { color: #1E5DBE; }
+  .handoff-banner.p2 .handoff-eyebrow { color: #B84000; }
+  .handoff-banner.p3 .handoff-eyebrow { color: #166534; }
+  .handoff-name { font-size: 38px; font-weight: 900; line-height: 1.1; }
+  .handoff-banner.p1 .handoff-name { color: #0C447C; }
+  .handoff-banner.p2 .handoff-name { color: #7A2900; }
+  .handoff-banner.p3 .handoff-name { color: #14532D; }
+  .handoff-role { font-size: 17px; font-weight: 700; margin-top: 2px; }
+  .handoff-banner.p1 .handoff-role { color: #2470B8; }
+  .handoff-banner.p2 .handoff-role { color: #D05000; }
+  .handoff-banner.p3 .handoff-role { color: #15803D; }
+
+  .handoff-roles-grid { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 8px; }
+
+  .role-chip {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .role-chip.asker    { background: #EBF2FF; color: #1E5DBE; }
+  .role-chip.answerer { background: #FFF0E6; color: #B84000; }
+  .role-chip.grader   { background: #ECFDF5; color: #166534; }
+  .role-chip-name { font-weight: 900; }
+
+  .handoff-note { font-size: 15px; color: #6B7592; font-weight: 500; text-align: center; line-height: 1.6; max-width: 440px; }
+
+  .btn-ready {
+    width: 100%;
+    max-width: 500px;
+    padding: 16px;
+    font-size: 19px;
+    font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    background: #1D9E75;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    box-shadow: 0 4px 12px rgba(29,158,117,0.3);
+  }
+  .btn-ready:hover { background: #178A65; }
+  .btn-ready:active { transform: scale(0.97); }
+
+  /* ══════════════════════════════
+     QUIZ SCREEN
+  ══════════════════════════════ */
+  #screen-quiz {
+    flex-direction: column;
+    padding: 1rem 1.5rem 1.5rem;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  /* Score bar — centered */
+  .quiz-top {
+    width: 100%;
+    max-width: 960px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .scores-bar { display: flex; gap: 8px; align-items: center; }
+  .score-card {
+    background: white;
+    border-radius: 12px;
+    padding: 10px 20px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(13,27,62,0.06);
+    min-width: 90px;
+  }
+  .score-name { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+  .score-name.p1 { color: #1E5DBE; }
   .score-name.p2 { color: #B84000; }
-  .score-val { font-size: 32px; font-weight: 900; color: #1a1a2e; line-height: 1.1; }
+  .score-name.p3 { color: #166534; }
+  .score-val { font-size: 32px; font-weight: 900; color: #0D1B3E; line-height: 1.1; }
   .score-sub { font-size: 11px; color: #aaa; font-weight: 700; letter-spacing: 0.5px; }
 
-  .meta-row { width: 100%; display: flex; align-items: center; justify-content: space-between; }
-  .cat-badge { font-size: 11px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; padding: 5px 12px; border-radius: 20px; }
-  .cat-icebreaker { background: #EEEDFE; color: #3C3489; }
-  .cat-wouldurather { background: #EAF3DE; color: #27500A; }
-  .cat-teacherlife { background: #E1F5EE; color: #085041; }
-  .cat-hottakes { background: #FAEEDA; color: #633806; }
-  .q-counter { font-size: 13px; font-weight: 700; color: #aaa; }
+  .scores-divider { width: 1px; height: 40px; background: #E0E4F0; }
 
-  .qa-card { width: 100%; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.07); }
-  .question-section { padding: 1.5rem 1.5rem 1.25rem; border-bottom: 2px dashed #EEF0F3; }
-  .section-label { font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #BBC; margin-bottom: 8px; }
-  .question-text { font-size: 21px; font-weight: 800; color: #1a1a2e; line-height: 1.4; }
-  .answer-section { padding: 1.1rem 1.5rem 1.25rem; background: #F5FBF8; }
-  .answer-section-label { font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #1D9E75; margin-bottom: 6px; }
-  .answer-text { font-size: 16px; font-weight: 700; color: #2a4a3e; line-height: 1.55; }
+  .q-counter { font-size: 16px; font-weight: 800; color: #9AA3B8; }
 
-  .answerer-chip { width: 100%; padding: 11px 16px; border-radius: 12px; font-size: 14px; font-weight: 700; text-align: center; }
+  /* Two columns — 2/3 + 1/3 */
+  .quiz-columns {
+    width: 100%;
+    max-width: 960px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  /* Left column */
+  .quiz-left { display: flex; flex-direction: column; gap: 12px; }
+
+  .qa-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(13,27,62,0.07);
+  }
+  .question-section {
+    padding: 1.6rem 1.6rem 1.3rem;
+    border-bottom: 2px dashed #EEF0F3;
+  }
+  .section-label { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #BBC; margin-bottom: 12px; }
+  .question-text { font-size: 26px; font-weight: 800; color: #0D1B3E; line-height: 1.4; letter-spacing: -0.3px; }
+  .answer-section { padding: 1.2rem 1.6rem 1.4rem; background: #F5FBF8; }
+  .answer-section-label { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #1D9E75; margin-bottom: 8px; }
+  .answer-text { font-size: 19px; font-weight: 600; color: #2a4a3e; line-height: 1.6; }
+
+  .answerer-chip {
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    text-align: center;
+  }
   .answerer-chip.p1 { background: #FFF0E6; color: #7A2900; }
   .answerer-chip.p2 { background: #E6F2FF; color: #0C447C; }
+  .answerer-chip.p3 { background: #ECFDF5; color: #166534; }
 
-  .grader-label { font-size: 13px; font-weight: 800; color: #999; text-align: center; text-transform: uppercase; letter-spacing: 0.6px; }
+  /* Right column */
+  .quiz-right {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
-  .grade-btns { width: 100%; display: flex; flex-direction: column; gap: 10px; }
-  .grade-btn { width: 100%; padding: 18px; font-size: 19px; font-weight: 800; font-family: 'Nunito', sans-serif; border: none; border-radius: 16px; cursor: pointer; transition: transform 0.1s, filter 0.1s; box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+  .grader-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #9AA3B8;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 4px 0;
+  }
+
+  .grade-btns { display: flex; flex-direction: column; gap: 12px; }
+  .grade-btn {
+    width: 100%;
+    padding: 20px 12px;
+    font-size: 18px;
+    font-weight: 800;
+    font-family: 'Inter', sans-serif;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform 0.1s, filter 0.1s;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  }
   .grade-btn:active { transform: scale(0.97); filter: brightness(0.95); }
   .btn-excellent   { background: #3DBE8F; color: #04342C; }
   .btn-pretty-good { background: #F5B942; color: #412402; }
   .btn-keep-trying { background: #EE7A55; color: #4A1B0C; }
 
-  .btn-next { width: 100%; padding: 15px; font-size: 17px; font-weight: 800; font-family: 'Nunito', sans-serif; background: white; color: #1a1a2e; border: 2px solid #E0E5EC; border-radius: 14px; cursor: pointer; transition: background 0.15s; }
+  .btn-next {
+    width: 100%;
+    padding: 16px;
+    font-size: 17px;
+    font-weight: 800;
+    font-family: 'Inter', sans-serif;
+    background: white;
+    color: #0D1B3E;
+    border: 2px solid #E0E4F0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+    display: none;
+  }
   .btn-next:hover { background: #F0F4F8; }
 
-  .btn-end-game { background: none; border: none; font-size: 13px; font-weight: 700; color: #CCC; cursor: pointer; font-family: 'Nunito', sans-serif; padding: 6px 12px; border-radius: 8px; transition: color 0.2s; align-self: center; margin-bottom: 0.5rem; }
+  .btn-end-game {
+    background: none;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    color: #CCC;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    padding: 6px;
+    transition: color 0.2s;
+    align-self: center;
+    margin-top: 3rem;
+  }
   .btn-end-game:hover { color: #E24B4A; }
 
-  .winner-banner { width: 100%; background: white; border-radius: 20px; padding: 2rem 1.5rem; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; flex-direction: column; align-items: center; gap: 6px; }
-  .trophy { font-size: 56px; }
-  .winner-eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #BBC; }
-  .winner-name { font-size: 36px; font-weight: 900; color: #1a1a2e; }
-  .winner-sub { font-size: 15px; font-weight: 700; color: #999; }
+  /* ══════════════════════════════
+     END SCREEN
+  ══════════════════════════════ */
+  #screen-end {
+    align-items: center;
+    padding: 2rem 1.5rem 3rem;
+    gap: 1.25rem;
+    overflow-y: auto;
+  }
 
-  .final-scores { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .final-score-card { background: white; border-radius: 16px; padding: 1.25rem 1rem; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 4px; border: 2px solid transparent; }
-  .final-score-card.winner-card { border-color: #1D9E75; box-shadow: 0 4px 16px rgba(29,158,117,0.2); }
-  .final-player-name { font-size: 16px; font-weight: 800; color: #1a1a2e; }
-  .final-score-val { font-size: 44px; font-weight: 900; color: #1a1a2e; line-height: 1; }
-  .final-score-label { font-size: 12px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
+  .winner-banner {
+    width: 100%;
+    max-width: 600px;
+    background: white;
+    border-radius: 20px;
+    padding: 1.75rem 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .trophy { font-size: 48px; }
+  .winner-eyebrow { font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #BBC; }
+  .winner-name { font-size: 32px; font-weight: 900; color: #0D1B3E; letter-spacing: -0.5px; }
+  .winner-sub { font-size: 14px; font-weight: 600; color: #9AA3B8; }
+
+  .final-scores { width: 100%; max-width: 600px; display: flex; gap: 10px; }
+  .final-score-card {
+    flex: 1;
+    background: white;
+    border-radius: 14px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border: 2px solid transparent;
+  }
+  .final-score-card.winner-card { border-color: #1D9E75; }
+  .final-player-name { font-size: 14px; font-weight: 800; color: #0D1B3E; }
+  .final-score-val { font-size: 40px; font-weight: 900; color: #0D1B3E; line-height: 1; }
+  .final-score-label { font-size: 11px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
+
   .final-qs { font-size: 13px; color: #BBC; font-weight: 600; }
 
-  .btn-play-again { width: 100%; padding: 17px; font-size: 20px; font-weight: 900; font-family: 'Nunito', sans-serif; background: #1D9E75; color: white; border: none; border-radius: 16px; cursor: pointer; transition: transform 0.1s, background 0.15s; box-shadow: 0 4px 12px rgba(29,158,117,0.3); margin-top: 0.5rem; }
-  .btn-play-again:hover { background: #178a65; }
+  .session-log {
+    width: 100%;
+    max-width: 600px;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+  .log-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #F0F2F8;
+    font-size: 13px;
+    font-weight: 800;
+    color: #0D1B3E;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .log-item {
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid #F8F9FC;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+  .log-item:last-child { border-bottom: none; }
+  .log-q { font-size: 13px; font-weight: 700; color: #0D1B3E; line-height: 1.4; }
+  .log-who { font-size: 11px; font-weight: 600; color: #9AA3B8; margin-top: 2px; }
+  .log-grade {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .grade-excellent   { background: #DCFCE7; color: #166534; }
+  .grade-pretty-good { background: #FEF9C3; color: #854D0E; }
+  .grade-keep-trying { background: #FEE2E2; color: #991B1B; }
+
+  .end-actions { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 10px; }
+
+  .btn-play-again {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    background: #1D9E75;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    box-shadow: 0 4px 12px rgba(29,158,117,0.3);
+  }
+  .btn-play-again:hover { background: #178A65; }
   .btn-play-again:active { transform: scale(0.97); }
-  .btn-new-players { background: none; border: none; font-size: 14px; font-weight: 700; color: #BBC; cursor: pointer; font-family: 'Nunito', sans-serif; padding: 6px; margin-bottom: 1rem; }
-  .btn-new-players:hover { color: #185FA5; }
+
+  .btn-new-players {
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    color: #9AA3B8;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    padding: 6px;
+    text-align: center;
+  }
+  .btn-new-players:hover { color: #1D9E75; }
 </style>
 </head>
 <body>
-<div class="app">
 
-  <div class="screen active" id="screen-setup">
-    <div class="logo">Quiz<span>Pair</span></div>
-    <div class="tagline">Demo version — fun questions for teachers.</div>
+<div class="app-header">
+  <img src="/arcade/logo.png" alt="Code Cat">
+  <div class="app-header-title">Quiz<span>Pair</span></div>
+</div>
+
+<!-- ══ SETUP ══ -->
+<div class="screen active" id="screen-setup">
+  <p class="setup-title">QuizPair</p>
+  <p class="setup-sub">Enter 2 or 3 player names to begin</p>
+  <div class="name-cards">
     <div class="name-card">
-      <div class="player-label p1-label">Player 1</div>
+      <div class="player-label label-p1">Player 1</div>
       <input class="name-input" id="name1" type="text" placeholder="First name..." maxlength="16" autocomplete="off" />
     </div>
     <div class="name-card">
-      <div class="player-label p2-label">Player 2</div>
+      <div class="player-label label-p2">Player 2</div>
       <input class="name-input" id="name2" type="text" placeholder="First name..." maxlength="16" autocomplete="off" />
     </div>
-    <button class="btn-primary" id="btn-start">Let's Play!</button>
+    <div class="name-card optional">
+      <div class="player-label label-p3">Player 3 <span class="label-optional">optional</span></div>
+      <input class="name-input" id="name3" type="text" placeholder="First name (optional)..." maxlength="16" autocomplete="off" />
+    </div>
+  </div>
+  <button class="btn-start" id="btn-start">Let's Play!</button>
+</div>
+
+<!-- ══ HANDOFF ══ -->
+<div class="screen" id="screen-handoff">
+  <div class="handoff-banner p1" id="handoff-banner">
+    <div class="handoff-icon">📱</div>
+    <div class="handoff-eyebrow">iPad goes to</div>
+    <div class="handoff-name" id="handoff-name">Player</div>
+    <div class="handoff-role">You ask the question and grade</div>
+  </div>
+  <div class="handoff-roles-grid" id="handoff-roles-grid"></div>
+  <div class="handoff-note" id="handoff-note"></div>
+  <button class="btn-ready" id="btn-ready">Ready!</button>
+</div>
+
+<!-- ══ QUIZ ══ -->
+<div class="screen" id="screen-quiz">
+  <div class="quiz-top">
+    <div class="scores-bar" id="scores-bar"></div>
+    <div class="scores-divider"></div>
+    <div class="q-counter" id="q-counter">Q1</div>
   </div>
 
-  <div class="screen" id="screen-handoff">
-    <div class="handoff-wrap p1" id="handoff-banner">
-      <div class="handoff-icon">📱</div>
-      <div class="handoff-eyebrow">iPad goes to</div>
-      <div class="handoff-name" id="handoff-name">Player 1</div>
-      <div class="handoff-role">You ask the question</div>
+  <div class="quiz-columns">
+    <div class="quiz-left">
+      <div class="qa-card">
+        <div class="question-section">
+          <div class="section-label">Read this question aloud</div>
+          <div class="question-text" id="question-text">Loading...</div>
+        </div>
+        <div class="answer-section">
+          <div class="answer-section-label">✓ Expected Answer</div>
+          <div class="answer-text" id="answer-text"></div>
+        </div>
+      </div>
+      <div class="answerer-chip p1" id="answerer-chip">Player answers out loud</div>
     </div>
-    <div class="handoff-note" id="handoff-note"></div>
-    <button class="btn-primary" id="btn-ready">Ready!</button>
+
+    <div class="quiz-right">
+      <div class="grader-label" id="grader-label">Grade their answer:</div>
+      <div class="grade-btns" id="grade-btns">
+        <button class="grade-btn btn-excellent"   onclick="grade(3,'Excellent!')">⭐ Excellent!</button>
+        <button class="grade-btn btn-pretty-good" onclick="grade(2,'Pretty Good')">👍 Pretty Good</button>
+        <button class="grade-btn btn-keep-trying" onclick="grade(0,'Keep Trying')">💪 Keep Trying</button>
+      </div>
+      <button class="btn-next" id="btn-next" onclick="nextTurn()">Next Question →</button>
+      <button class="btn-end-game" onclick="endGame()">End Game</button>
+    </div>
   </div>
+</div>
 
-  <div class="screen" id="screen-quiz">
-    <div class="scores-bar">
-      <div class="score-card">
-        <div class="score-name p1" id="score-name1">P1</div>
-        <div class="score-val" id="score-val1">0</div>
-        <div class="score-sub">PTS</div>
-      </div>
-      <div class="score-card">
-        <div class="score-name p2" id="score-name2">P2</div>
-        <div class="score-val" id="score-val2">0</div>
-        <div class="score-sub">PTS</div>
-      </div>
-    </div>
-
-    <div class="meta-row">
-      <span class="cat-badge cat-icebreaker" id="cat-badge">Icebreaker</span>
-      <span class="q-counter" id="q-counter">Q1</span>
-    </div>
-
-    <div class="qa-card">
-      <div class="question-section">
-        <div class="section-label">Read this question aloud</div>
-        <div class="question-text" id="question-text">Loading...</div>
-      </div>
-      <div class="answer-section">
-        <div class="answer-section-label">✓ Example Answer</div>
-        <div class="answer-text" id="answer-text"></div>
-      </div>
-    </div>
-
-    <div class="answerer-chip p2" id="answerer-chip">Player 2 answers out loud</div>
-    <div class="grader-label" id="grader-label">Grade their answer:</div>
-
-    <div class="grade-btns" id="grade-btns">
-      <button class="grade-btn btn-excellent"   onclick="grade(3)">⭐ Excellent!</button>
-      <button class="grade-btn btn-pretty-good" onclick="grade(2)">👍 Pretty Good</button>
-      <button class="grade-btn btn-keep-trying" onclick="grade(0)">💪 Keep Trying</button>
-    </div>
-
-    <button class="btn-next" id="btn-next" style="display:none;" onclick="nextTurn()">Next Question →</button>
-    <button class="btn-end-game" onclick="endGame()">End Game</button>
+<!-- ══ END ══ -->
+<div class="screen" id="screen-end">
+  <div class="winner-banner">
+    <div class="trophy" id="trophy">🏆</div>
+    <div class="winner-eyebrow" id="winner-eyebrow">Winner</div>
+    <div class="winner-name" id="winner-name">—</div>
+    <div class="winner-sub" id="winner-sub"></div>
   </div>
-
-  <div class="screen" id="screen-end">
-    <div class="winner-banner" id="winner-banner">
-      <div class="trophy" id="trophy">🏆</div>
-      <div class="winner-eyebrow">Winner</div>
-      <div class="winner-name" id="winner-name">—</div>
-      <div class="winner-sub" id="winner-sub"></div>
-    </div>
-    <div class="final-scores">
-      <div class="final-score-card" id="final-card-1">
-        <div class="final-player-name" id="final-name1">P1</div>
-        <div class="final-score-val" id="final-val1">0</div>
-        <div class="final-score-label">points</div>
-      </div>
-      <div class="final-score-card" id="final-card-2">
-        <div class="final-player-name" id="final-name2">P2</div>
-        <div class="final-score-val" id="final-val2">0</div>
-        <div class="final-score-label">points</div>
-      </div>
-    </div>
-    <div class="final-qs" id="final-qs">— questions answered</div>
+  <div class="final-scores" id="final-scores"></div>
+  <div class="final-qs" id="final-qs"></div>
+  <div class="session-log">
+    <div class="log-header">Session Summary</div>
+    <div id="log-items"></div>
+  </div>
+  <div class="end-actions">
     <button class="btn-play-again" onclick="playAgain()">Play Again</button>
     <button class="btn-new-players" onclick="newPlayers()">Change Players</button>
   </div>
-
 </div>
+
 <script>
 const questions = [
-  { q: "What's the weirdest thing a student has ever said to you?", a: "Any true, memorable classroom moment — the funnier or stranger, the better.", cat: "icebreaker" },
-  { q: "What's your go-to snack during a long day of grading?", a: "Whatever gets you through the stack — coffee counts too.", cat: "icebreaker" },
-  { q: "If you could teach any subject other than your own, what would it be?", a: "Any subject, plus a quick reason why.", cat: "icebreaker" },
-  { q: "What's one thing on your desk that has zero educational purpose?", a: "The more random, the better.", cat: "icebreaker" },
-  { q: "What was your very first job before teaching?", a: "Any job — bonus points if it's unexpected.", cat: "icebreaker" },
-  { q: "Would you rather teach the first week of school or the last week, every year, forever?", a: "Pick one and defend it in one sentence.", cat: "wouldurather" },
-  { q: "Would you rather have no more staff meetings or no more report cards?", a: "Pick one and defend it in one sentence.", cat: "wouldurather" },
-  { q: "Would you rather have a class that's silent all day or one that never stops talking?", a: "Pick one and defend it in one sentence.", cat: "wouldurather" },
-  { q: "Would you rather grade 100 essays by hand or run 100 laps at recess duty?", a: "Pick one and defend it in one sentence.", cat: "wouldurather" },
-  { q: "Would you rather teach outdoors every day or never leave your classroom?", a: "Pick one and defend it in one sentence.", cat: "wouldurather" },
-  { q: "What's the most creative excuse a student has given for not doing homework?", a: "Any true story — the more creative, the better.", cat: "teacherlife" },
-  { q: "What's your classroom's unofficial mascot or catchphrase?", a: "Anything your students would immediately recognize.", cat: "teacherlife" },
-  { q: "What's the one supply you always run out of first?", a: "Pencils, tape, tissues — whatever it is for you.", cat: "teacherlife" },
-  { q: "If your classroom had a theme song, what would it be?", a: "Any song — serious or silly.", cat: "teacherlife" },
-  { q: "What's the best field trip you've ever chaperoned?", a: "Any trip, plus what made it memorable.", cat: "teacherlife" },
-  { q: "Pineapple on pizza — yes or no?", a: "Pick a side. No sitting on the fence.", cat: "hottakes" },
-  { q: "Is a hot dog a sandwich?", a: "Pick a side and give one reason.", cat: "hottakes" },
-  { q: "What's the most overrated school supply?", a: "Any supply, plus a quick reason why.", cat: "hottakes" },
-  { q: "Cursive — worth still teaching or let it go?", a: "Pick a side and give one reason.", cat: "hottakes" },
-  { q: "Best day of the school week, and why?", a: "Any day, plus a quick reason why.", cat: "hottakes" },
+  { q: "What's the weirdest thing a student has ever said to you?", a: "Any true, memorable classroom moment — the funnier or stranger, the better." },
+  { q: "What's your go-to snack during a long day of grading?", a: "Whatever gets you through the stack — coffee counts too." },
+  { q: "If you could teach any subject other than your own, what would it be?", a: "Any subject, plus a quick reason why." },
+  { q: "What's one thing on your desk that has zero educational purpose?", a: "The more random, the better." },
+  { q: "What was your very first job before teaching?", a: "Any job — bonus points if it's unexpected." },
+  { q: "Would you rather teach the first week of school or the last week, every year, forever?", a: "Pick one and defend it in one sentence." },
+  { q: "Would you rather have no more staff meetings or no more report cards?", a: "Pick one and defend it in one sentence." },
+  { q: "Would you rather have a class that's silent all day or one that never stops talking?", a: "Pick one and defend it in one sentence." },
+  { q: "Would you rather grade 100 essays by hand or run 100 laps at recess duty?", a: "Pick one and defend it in one sentence." },
+  { q: "Would you rather teach outdoors every day or never leave your classroom?", a: "Pick one and defend it in one sentence." },
+  { q: "What's the most creative excuse a student has given for not doing homework?", a: "Any true story — the more creative, the better." },
+  { q: "What's your classroom's unofficial mascot or catchphrase?", a: "Anything your students would immediately recognize." },
+  { q: "What's the one supply you always run out of first?", a: "Pencils, tape, tissues — whatever it is for you." },
+  { q: "If your classroom had a theme song, what would it be?", a: "Any song — serious or silly." },
+  { q: "What's the best field trip you've ever chaperoned?", a: "Any trip, plus what made it memorable." },
+  { q: "Pineapple on pizza — yes or no?", a: "Pick a side. No sitting on the fence." },
+  { q: "Is a hot dog a sandwich?", a: "Pick a side and give one reason." },
+  { q: "What's the most overrated school supply?", a: "Any supply, plus a quick reason why." },
+  { q: "Cursive — worth still teaching or let it go?", a: "Pick a side and give one reason." },
+  { q: "Best day of the school week, and why?", a: "Any day, plus a quick reason why." },
 ];
 
-const catLabels  = { icebreaker: "Icebreaker", wouldurather: "Would You Rather", teacherlife: "Teacher Life", hottakes: "Hot Takes" };
-const catClasses = { icebreaker: "cat-icebreaker", wouldurather: "cat-wouldurather", teacherlife: "cat-teacherlife", hottakes: "cat-hottakes" };
+let players = [], scores = [], turnIndex = 0;
+let questionCount = 0, usedByPlayer = [], currentQ = null;
+let graded = false, sessionLog = [];
 
-let p1 = "Player 1", p2 = "Player 2";
-let scores = [0, 0];
-let currentAnswerer = 0;
-let questionCount = 0;
-let usedIndexes = [];
-let currentQ = null;
-let graded = false;
-
-function getQuestion() {
-  if (usedIndexes.length === questions.length) usedIndexes = [];
+function getQuestion(playerIndex) {
+  if (usedByPlayer[playerIndex].length === questions.length) {
+    usedByPlayer[playerIndex] = [];
+  }
   let idx;
-  do { idx = Math.floor(Math.random() * questions.length); } while (usedIndexes.includes(idx));
-  usedIndexes.push(idx);
+  do {
+    idx = Math.floor(Math.random() * questions.length);
+  } while (usedByPlayer[playerIndex].includes(idx));
+  usedByPlayer[playerIndex].push(idx);
   return questions[idx];
 }
 
@@ -252,30 +585,74 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 
+function playerClass(i) { return ['p1','p2','p3'][i % 3]; }
+
 document.getElementById('btn-start').addEventListener('click', () => {
   const n1 = document.getElementById('name1').value.trim();
   const n2 = document.getElementById('name2').value.trim();
-  if (!n1 || !n2) { alert('Please enter both names!'); return; }
-  p1 = n1; p2 = n2;
-  document.getElementById('score-name1').textContent = p1;
-  document.getElementById('score-name2').textContent = p2;
-  currentAnswerer = 0; questionCount = 0; scores = [0, 0]; usedIndexes = [];
-  updateScores();
+  const n3 = document.getElementById('name3').value.trim();
+  if (!n1 || !n2) { alert('Please enter at least two names!'); return; }
+  players = n3 ? [n1, n2, n3] : [n1, n2];
+  scores  = players.map(() => 0);
+  usedByPlayer = players.map(() => []);
+  turnIndex = 0; questionCount = 0; sessionLog = [];
+  buildScoresBar();
   showHandoff();
 });
 
-function showHandoff() {
-  // currentAnswerer = who is ANSWERING (no iPad)
-  // iPad holder = the OTHER player = the questioner
-  const iPadHolder = currentAnswerer === 0 ? p2 : p1;
-  const answerer   = currentAnswerer === 0 ? p1 : p2;
-  const holderIsP1 = currentAnswerer !== 0;
+function buildScoresBar() {
+  const bar = document.getElementById('scores-bar');
+  bar.innerHTML = '';
+  players.forEach((name, i) => {
+    const card = document.createElement('div');
+    card.className = 'score-card';
+    card.innerHTML = `
+      <div class="score-name ${playerClass(i)}">${name}</div>
+      <div class="score-val" id="score-val-${i}">0</div>
+      <div class="score-sub">PTS</div>
+    `;
+    bar.appendChild(card);
+  });
+}
 
+function updateScores() {
+  players.forEach((_, i) => {
+    document.getElementById(`score-val-${i}`).textContent = scores[i];
+  });
+}
+
+function getRoles() {
+  const n = players.length;
+  const answerer = turnIndex;
+  const asker    = (turnIndex + 1) % n;  // iPad holder — reads AND grades
+  const listener = n === 3 ? (turnIndex + 2) % n : -1; // third player
+  const grader   = asker; // always the iPad holder
+  return { answerer, asker, grader, listener };
+}
+
+function showHandoff() {
+  const { answerer, asker, listener } = getRoles();
   const banner = document.getElementById('handoff-banner');
-  banner.className = 'handoff-wrap ' + (holderIsP1 ? 'p1' : 'p2');
-  document.getElementById('handoff-name').textContent = iPadHolder;
+  banner.className = `handoff-banner ${playerClass(asker)}`;
+  document.getElementById('handoff-name').textContent = players[asker];
+
+  const rolesGrid = document.getElementById('handoff-roles-grid');
+  if (players.length === 3) {
+    rolesGrid.innerHTML = `
+      <div class="role-chip asker"><span>📱</span><span><span class="role-chip-name">${players[asker]}</span> — reads the question and grades</span></div>
+      <div class="role-chip answerer"><span>🗣️</span><span><span class="role-chip-name">${players[answerer]}</span> — answers out loud</span></div>
+      <div class="role-chip grader"><span>👂</span><span><span class="role-chip-name">${players[listener]}</span> — listen carefully, you're next!</span></div>
+    `;
+  } else {
+    rolesGrid.innerHTML = `
+      <div class="role-chip asker"><span>📱</span><span><span class="role-chip-name">${players[asker]}</span> — reads the question and grades</span></div>
+      <div class="role-chip answerer"><span>🗣️</span><span><span class="role-chip-name">${players[answerer]}</span> — answers out loud</span></div>
+    `;
+  }
+
   document.getElementById('handoff-note').textContent =
-    iPadHolder + ' holds the iPad and reads the question aloud. ' + answerer + ' puts the iPad face-down and answers from memory.';
+    `Pass the iPad to ${players[asker]}. They read the question aloud — ${players[answerer]} answers from memory.`;
+
   showScreen('screen-handoff');
 }
 
@@ -285,100 +662,101 @@ document.getElementById('btn-ready').addEventListener('click', () => {
 });
 
 function loadQuestion() {
-  currentQ = getQuestion();
+  currentQ = getQuestion(turnIndex);
   questionCount++;
   graded = false;
-
-  const answererName = currentAnswerer === 0 ? p1 : p2;
-  const isAnswererP1 = currentAnswerer === 0;
+  const { answerer, asker } = getRoles();
 
   document.getElementById('question-text').textContent = currentQ.q;
-  document.getElementById('answer-text').textContent = currentQ.a;
-  document.getElementById('q-counter').textContent = 'Q' + questionCount;
-
-  const badge = document.getElementById('cat-badge');
-  badge.textContent = catLabels[currentQ.cat];
-  badge.className = 'cat-badge ' + catClasses[currentQ.cat];
+  document.getElementById('answer-text').textContent   = currentQ.a;
+  document.getElementById('q-counter').textContent     = 'Q' + questionCount;
 
   const chip = document.getElementById('answerer-chip');
-  chip.textContent = answererName + ' answers out loud';
-  chip.className = 'answerer-chip ' + (isAnswererP1 ? 'p1' : 'p2');
+  chip.textContent = players[answerer] + ' answers out loud';
+  chip.className   = `answerer-chip ${playerClass(answerer)}`;
 
-  document.getElementById('grader-label').textContent = 'Grade their answer:';
-  document.getElementById('btn-next').style.display = 'none';
+  document.getElementById('grader-label').textContent =
+    players.length === 3
+      ? `${players[asker]} — grade their answer:`
+      : 'Grade their answer:';
+
   document.getElementById('grade-btns').style.display = 'flex';
+  document.getElementById('btn-next').style.display   = 'none';
 }
 
-function grade(pts) {
+function grade(pts, label) {
   if (graded) return;
   graded = true;
-  scores[currentAnswerer] += pts;
+  scores[turnIndex] += pts;
   updateScores();
+  sessionLog.push({ q: currentQ.q, answerer: players[turnIndex], grade: label, pts });
   document.getElementById('grade-btns').style.display = 'none';
-  document.getElementById('btn-next').style.display = 'block';
-  const labels = { 3: '⭐ Marked: Excellent!', 2: '👍 Marked: Pretty Good', 0: '💪 Marked: Keep Trying' };
-  document.getElementById('grader-label').textContent = labels[pts];
-}
-
-function updateScores() {
-  document.getElementById('score-val1').textContent = scores[0];
-  document.getElementById('score-val2').textContent = scores[1];
+  document.getElementById('btn-next').style.display   = 'block';
+  document.getElementById('grader-label').textContent =
+    pts === 3 ? '⭐ Marked: Excellent!' : pts === 2 ? '👍 Marked: Pretty Good' : '💪 Marked: Keep Trying';
 }
 
 function nextTurn() {
-  currentAnswerer = currentAnswerer === 0 ? 1 : 0;
+  turnIndex = (turnIndex + 1) % players.length;
   showHandoff();
 }
 
 function endGame() {
-  document.getElementById('final-name1').textContent = p1;
-  document.getElementById('final-name2').textContent = p2;
-  document.getElementById('final-val1').textContent = scores[0];
-  document.getElementById('final-val2').textContent = scores[1];
-  document.getElementById('final-qs').textContent = questionCount + ' question' + (questionCount !== 1 ? 's' : '') + ' answered';
+  const maxScore = Math.max(...scores);
+  const winners  = players.filter((_, i) => scores[i] === maxScore);
+  const isTie    = winners.length > 1;
 
-  document.getElementById('final-card-1').className = 'final-score-card';
-  document.getElementById('final-card-2').className = 'final-score-card';
+  document.getElementById('trophy').textContent        = isTie ? '🤝' : '🏆';
+  document.getElementById('winner-eyebrow').textContent = isTie ? "It's a Tie!" : 'Winner';
+  document.getElementById('winner-name').textContent   = isTie ? winners.join(' & ') : winners[0];
+  document.getElementById('winner-sub').textContent    = isTie ? `${maxScore} points each` : `${maxScore} pts — well played!`;
 
-  const trophy = document.getElementById('trophy');
-  const winnerName = document.getElementById('winner-name');
-  const winnerSub = document.getElementById('winner-sub');
-  const winnerBanner = document.getElementById('winner-banner');
+  const finalScores = document.getElementById('final-scores');
+  finalScores.innerHTML = '';
+  players.forEach((name, i) => {
+    const isWinner = scores[i] === maxScore && !isTie;
+    const card = document.createElement('div');
+    card.className = `final-score-card${isWinner ? ' winner-card' : ''}`;
+    card.innerHTML = `
+      <div class="final-player-name">${name}</div>
+      <div class="final-score-val">${scores[i]}</div>
+      <div class="final-score-label">points</div>
+    `;
+    finalScores.appendChild(card);
+  });
 
-  winnerBanner.style.background = 'white';
-  winnerName.style.color = '#1a1a2e';
+  document.getElementById('final-qs').textContent =
+    `${questionCount} question${questionCount !== 1 ? 's' : ''} answered`;
 
-  if (scores[0] === scores[1]) {
-    trophy.textContent = '🤝';
-    document.querySelector('.winner-eyebrow').textContent = "It's a Tie!";
-    winnerName.textContent = scores[0] + ' points each';
-    winnerSub.textContent = 'Well played, both of you!';
-  } else if (scores[0] > scores[1]) {
-    trophy.textContent = '🏆';
-    document.querySelector('.winner-eyebrow').textContent = 'Winner';
-    winnerName.textContent = p1;
-    winnerSub.textContent = scores[0] + ' pts vs ' + scores[1] + ' pts';
-    document.getElementById('final-card-1').className = 'final-score-card winner-card';
-  } else {
-    trophy.textContent = '🏆';
-    document.querySelector('.winner-eyebrow').textContent = 'Winner';
-    winnerName.textContent = p2;
-    winnerSub.textContent = scores[1] + ' pts vs ' + scores[0] + ' pts';
-    document.getElementById('final-card-2').className = 'final-score-card winner-card';
-  }
+  const logItems = document.getElementById('log-items');
+  logItems.innerHTML = '';
+  sessionLog.forEach(entry => {
+    const gradeClass = entry.pts === 3 ? 'grade-excellent' : entry.pts === 2 ? 'grade-pretty-good' : 'grade-keep-trying';
+    const item = document.createElement('div');
+    item.className = 'log-item';
+    item.innerHTML = `
+      <div>
+        <div class="log-q">${entry.q}</div>
+        <div class="log-who">${entry.answerer}</div>
+      </div>
+      <div class="log-grade ${gradeClass}">${entry.grade}</div>
+    `;
+    logItems.appendChild(item);
+  });
+
   showScreen('screen-end');
 }
 
 function playAgain() {
-  scores = [0, 0]; currentAnswerer = 0; questionCount = 0; usedIndexes = [];
-  updateScores();
+  scores = players.map(() => 0);
+  usedByPlayer = players.map(() => []);
+  turnIndex = 0; questionCount = 0; sessionLog = [];
+  buildScoresBar();
   showHandoff();
 }
 
 function newPlayers() {
-  scores = [0, 0]; currentAnswerer = 0; questionCount = 0; usedIndexes = [];
-  document.getElementById('name1').value = '';
-  document.getElementById('name2').value = '';
+  ['name1','name2','name3'].forEach(id => document.getElementById(id).value = '');
   showScreen('screen-setup');
 }
 </script>
