@@ -16,9 +16,7 @@
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
     color: #0D1B3E;
-    background-color: #FAF8F4;
-    background-image: radial-gradient(circle, #C8C0B0 1px, transparent 1px);
-    background-size: 24px 24px;
+    background-color: #EAF2FC;
     display: flex;
     flex-direction: column;
   }
@@ -26,38 +24,52 @@
   /* ── HEADER ── */
   .header {
     background: #0D1B3E;
-    padding: 0 2.5rem;
-    height: 60px;
+    padding: 1.1rem 2.5rem;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
     position: sticky;
     top: 0;
     z-index: 10;
   }
   .logo {
-    font-size: 20px;
+    display: flex;
+    align-items: center;
+  }
+  .logo-text {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .logo-name {
+    font-size: 19px;
     font-weight: 900;
     letter-spacing: -0.3px;
     color: white;
   }
-  .logo span { color: #5B9FFF; }
-
-  /* ── HERO ── */
-  .hero {
-    background: #1E5DBE;
-    padding: 1.25rem 2.5rem;
+  .logo-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: #BFD7FF;
+    background: rgba(91,159,255,0.18);
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+  .logo-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 500;
+    margin-top: 3px;
   }
   .hero h1 {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 800;
     color: white;
     letter-spacing: -0.3px;
-  }
-  .hero p {
-    font-size: 13px;
-    color: rgba(255,255,255,0.6);
-    font-weight: 500;
-    margin-top: 4px;
+    text-align: right;
   }
 
   /* ── MAIN ── */
@@ -77,8 +89,8 @@
     display: flex;
     align-items: baseline;
     gap: 10px;
-    margin-bottom: 1.1rem;
-    padding-bottom: 0.8rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.7rem;
     border-bottom: 2px solid rgba(13,27,62,0.1);
   }
   .section-icon { font-size: 18px; }
@@ -88,21 +100,12 @@
     color: #0D1B3E;
     letter-spacing: -0.3px;
   }
-  .section-count {
-    font-size: 12px;
-    font-weight: 600;
-    color: #9AA3B8;
-    background: rgba(13,27,62,0.07);
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-left: auto;
-  }
 
   /* ── GRID ── */
   .activities-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.1rem;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 1rem;
   }
 
   /* ── CARD ── */
@@ -125,48 +128,14 @@
   .stripe-tools { background: linear-gradient(90deg, #92400E, #F59E0B); }
 
   .card-top {
-    padding: 1.4rem 1.4rem 1.1rem;
+    padding: 1.1rem 1.2rem 0.9rem;
     flex: 1;
   }
-  .card-meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  .card-badge {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    padding: 4px 10px;
-    border-radius: 6px;
-  }
-  .badge-games { background: #EBF2FF; color: #1E5DBE; }
-  .badge-tools { background: #FEF3C7; color: #92400E; }
-
-  .card-ready {
-    font-size: 11px;
-    font-weight: 600;
-    color: #16A34A;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .card-ready::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    background: #16A34A;
-    border-radius: 50%;
-    display: inline-block;
-  }
-
   .card-title {
-    font-size: 22px;
+    font-size: 19px;
     font-weight: 800;
     color: #0D1B3E;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     line-height: 1.2;
     letter-spacing: -0.4px;
   }
@@ -174,11 +143,11 @@
     font-size: 13px;
     color: #6B7592;
     font-weight: 500;
-    line-height: 1.65;
+    line-height: 1.6;
   }
 
   .card-actions {
-    padding: 1.1rem 1.4rem;
+    padding: 0.9rem 1.2rem;
     border-top: 1px solid #F0F2F8;
     display: flex;
     gap: 8px;
@@ -217,19 +186,6 @@
   }
   .btn-qr:hover { background: #E8EAF2; }
   .btn-qr:active { transform: scale(0.97); }
-
-  /* ── FOOTER ── */
-  footer {
-    background: #0D1B3E;
-    padding: 1.1rem 2.5rem;
-  }
-  .footer-brand {
-    font-size: 14px;
-    font-weight: 800;
-    color: white;
-    letter-spacing: -0.2px;
-  }
-  .footer-brand span { color: #5B9FFF; }
 
   /* ── QR OVERLAY ── */
   .qr-overlay {
@@ -325,19 +281,22 @@
 <body>
 
 <div class="header">
-  <div class="logo"><img src="logo.png" alt="Code Cat" style="height:38px; width:38px; object-fit:contain; margin-right:10px; vertical-align:middle;">Code Cat <span>Arcade</span></div>
-</div>
-
-<div class="hero">
-  <h1>Teacher Hub</h1>
-  <p>Choose an activity. Share the code.</p>
+  <div class="logo">
+    <img src="logo.png" alt="Code Cat" style="height:38px; width:38px; object-fit:contain; margin-right:12px;">
+    <div>
+      <div class="logo-text">
+        <span class="logo-name">Code Cat Studio</span>
+        <span class="logo-tag">Arcade</span>
+      </div>
+      <div class="logo-sub">Choose an activity. Share the code.</div>
+    </div>
+  </div>
+  <div class="hero">
+    <h1>Teacher Hub</h1>
+  </div>
 </div>
 
 <div class="main" id="activities-container"></div>
-
-<footer>
-  <div class="footer-brand">Code Cat <span>Studio</span></div>
-</footer>
 
 <!-- QR OVERLAY -->
 <div class="qr-overlay" id="qr-overlay">
@@ -375,8 +334,9 @@ const activities = [
   {
     title: "QuizPair",
     category: "games",
-    description: "Two students, one iPad. One asks, one answers out loud. Peer grading with live scores.",
-    file: "quizpair.html",
+    description: "iPad peer grading",
+    file: "quizpair/index.html",
+    versions: 2,
     ready: true
   },
   {
@@ -411,7 +371,6 @@ const catConfig  = {
   games: { label: "Games", icon: "🎮" },
   tools: { label: "Tools", icon: "🛠️" },
 };
-const badgeClass  = { games: "badge-games", tools: "badge-tools" };
 const stripeClass = { games: "stripe-games", tools: "stripe-tools" };
 
 let qrInstance = null;
@@ -428,7 +387,6 @@ function render() {
       <div class="section-header">
         <span class="section-icon">${cfg.icon}</span>
         <span class="section-title">${cfg.label}</span>
-        <span class="section-count">${items.length} ${items.length === 1 ? 'activity' : 'activities'}</span>
       </div>
       <div class="activities-grid" id="grid-${cat}"></div>
     `;
@@ -437,19 +395,20 @@ function render() {
     items.forEach(activity => {
       const card = document.createElement('div');
       card.className = 'activity-card';
+      const playIcon = activity.versions ? '☰' : '▶';
+      const playLabel = activity.versions ? 'Choose version' : 'Play';
+      const qrButton = activity.versions
+        ? ''
+        : `<button class="btn-qr" onclick="showQR('${activity.title}','${activity.file}')">📱 QR Code</button>`;
       card.innerHTML = `
         <div class="card-stripe ${stripeClass[activity.category]}"></div>
         <div class="card-top">
-          <div class="card-meta">
-            <span class="card-badge ${badgeClass[activity.category]}">${cfg.label}</span>
-            <span class="card-ready">Ready</span>
-          </div>
           <div class="card-title">${activity.title}</div>
           <div class="card-desc">${activity.description}</div>
         </div>
         <div class="card-actions">
-          <button class="btn-play" onclick="playActivity('${activity.file}')">▶ Play</button>
-          <button class="btn-qr" onclick="showQR('${activity.title}','${activity.file}')">📱 QR Code</button>
+          <button class="btn-play" onclick="playActivity('${activity.file}')">${playIcon} ${playLabel}</button>
+          ${qrButton}
         </div>
       `;
       grid.appendChild(card);
