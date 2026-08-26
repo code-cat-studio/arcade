@@ -3,10 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Countdown to Summer 🌴</title>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<title>Countdown to Holidays 🐠</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -16,340 +13,445 @@ body {
   font-family: 'Nunito', sans-serif;
   overflow-x: hidden;
   position: relative;
+  background: #006994;
 }
 
-/* ── SKY GRADIENT ── */
-.sky {
+/* ── WATER GRADIENT ── */
+.water {
   position: fixed; inset: 0; z-index: 0;
   background: linear-gradient(
     180deg,
-    #1a6eb5 0%,
-    #2e8ecf 25%,
-    #5ba8d8 45%,
-    #f4c97a 65%,
-    #f4956a 78%,
-    #e8735a 88%,
-    #c5566e 100%
+    #40c8f0 0%,
+    #28a8d8 8%,
+    #1a8ec0 18%,
+    #1278a8 30%,
+    #0e6494 44%,
+    #0a5080 58%,
+    #083d68 72%,
+    #062e54 84%,
+    #041e3a 100%
   );
-  animation: skyShift 20s ease-in-out infinite alternate;
-}
-@keyframes skyShift {
-  0%   { filter: hue-rotate(0deg) brightness(1); }
-  50%  { filter: hue-rotate(10deg) brightness(1.05); }
-  100% { filter: hue-rotate(-5deg) brightness(0.95); }
 }
 
-/* ── SUN ── */
-.sun {
-  position: fixed; top: 8%; right: 12%;
-  width: 90px; height: 90px; z-index: 1;
-  animation: sunFloat 6s ease-in-out infinite;
+/* ── SURFACE RIPPLE ── */
+.surface {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 60px; z-index: 2;
+  background: linear-gradient(180deg,
+    rgba(120,220,255,0.7) 0%,
+    rgba(80,200,240,0.4) 40%,
+    transparent 100%
+  );
+  animation: surfaceRipple 4s ease-in-out infinite;
 }
-.sun-core {
-  width: 90px; height: 90px; border-radius: 50%;
-  background: radial-gradient(circle, #fff9c4, #ffd54f, #ffab40);
-  box-shadow: 0 0 40px 20px rgba(255,200,50,0.5), 0 0 80px 40px rgba(255,160,30,0.2);
+@keyframes surfaceRipple {
+  0%,100% { transform: scaleX(1) translateY(0); }
+  50%      { transform: scaleX(1.01) translateY(2px); }
 }
-.sun-ray {
-  position: absolute; top: 50%; left: 50%;
-  width: 4px; border-radius: 2px;
-  background: rgba(255,220,80,0.6);
-  transform-origin: bottom center;
-}
-@keyframes sunFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
 
-/* ── CLOUDS ── */
-.cloud {
-  position: fixed; z-index: 2;
-  background: rgba(255,255,255,0.85);
-  border-radius: 50px;
-  animation: cloudDrift linear infinite;
-}
-.cloud::before, .cloud::after {
-  content: ''; position: absolute;
-  background: rgba(255,255,255,0.85);
-  border-radius: 50%;
-}
-@keyframes cloudDrift { from{transform:translateX(-300px)} to{transform:translateX(110vw)} }
-
-/* ── OCEAN ── */
-.ocean {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  height: 28%; z-index: 3;
+/* ── LIGHT RAYS ── */
+.rays {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 100%; z-index: 1; pointer-events: none;
   overflow: hidden;
 }
-.wave {
-  position: absolute; width: 200%; height: 100%;
-  background: linear-gradient(180deg, rgba(32,130,180,0.9) 0%, rgba(15,80,130,0.95) 100%);
-  border-radius: 40% 40% 0 0 / 20px 20px 0 0;
-  animation: waveMove linear infinite;
+.ray {
+  position: absolute; top: 0;
+  width: 80px; height: 100%;
+  background: linear-gradient(180deg,
+    rgba(160,230,255,0.26) 0%,
+    rgba(120,210,250,0.16) 30%,
+    rgba(80,180,230,0.08) 60%,
+    rgba(40,140,200,0.03) 80%,
+    transparent 100%
+  );
+  transform-origin: top center;
+  animation: raySwing ease-in-out infinite alternate;
+  border-radius: 0 0 50% 50%;
 }
-.wave1 { top: 0; animation-duration: 8s; background: rgba(64,164,214,0.7); border-radius: 45% 45% 0 0 / 30px 30px 0 0; }
-.wave2 { top: 8px; animation-duration: 11s; animation-direction: reverse; background: rgba(32,130,180,0.6); }
-.wave3 { top: 16px; animation-duration: 14s; background: rgba(15,90,150,0.8); }
-@keyframes waveMove { from{transform:translateX(-50%)} to{transform:translateX(0)} }
+@keyframes raySwing {
+  0%   { transform: rotate(var(--start-angle)) scaleX(1); opacity: var(--op); }
+  100% { transform: rotate(var(--end-angle))   scaleX(1.3); opacity: calc(var(--op) * 0.7); }
+}
 
-/* ── BEACH ── */
-.beach {
+/* ── BUBBLES ── */
+.bubble {
+  position: fixed; border-radius: 50%; z-index: 3;
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.6), rgba(255,255,255,0.1));
+  border: 1px solid rgba(255,255,255,0.3);
+  animation: bubbleRise ease-in-out infinite;
+  animation-duration: 45s;
+  pointer-events: none;
+}
+@keyframes bubbleRise {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  8%   { opacity: 0.6; }
+  92%  { opacity: 0.4; }
+  100% { transform: translateY(-110vh) translateX(var(--drift)); opacity: 0; }
+}
+
+/* ── SANDY BOTTOM ── */
+.sand {
   position: fixed; bottom: 0; left: 0; right: 0;
-  height: 18%; z-index: 4;
-  background: linear-gradient(180deg, #f5d87a 0%, #e8c55a 40%, #d4a843 100%);
+  height: 120px; z-index: 4;
+  background: linear-gradient(180deg,
+    #c8a850 0%,
+    #d4b860 30%,
+    #e0c870 60%,
+    #c8a850 100%
+  );
   border-radius: 60% 60% 0 0 / 40px 40px 0 0;
 }
+/* Sand texture ripples */
+.sand::before {
+  content: '';
+  position: absolute; top: 20px; left: 0; right: 0;
+  height: 8px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent, transparent 30px,
+    rgba(180,140,40,0.3) 30px, rgba(180,140,40,0.3) 60px
+  );
+  border-radius: 50%;
+}
+.sand::after {
+  content: '';
+  position: absolute; top: 40px; left: 20px; right: 20px;
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent, transparent 40px,
+    rgba(180,140,40,0.2) 40px, rgba(180,140,40,0.2) 80px
+  );
+  border-radius: 50%;
+}
 
-/* ── PALM TREES ── */
-.palm {
-  position: fixed; bottom: 15%; z-index: 5;
-  font-size: 5rem;
-  animation: palmSway 4s ease-in-out infinite;
-  filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.3));
+/* ── CORAL ── */
+.coral {
+  position: fixed; bottom: 80px; z-index: 5;
+  font-size: 3rem; line-height: 1;
+  animation: coralSway ease-in-out infinite alternate;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
   user-select: none;
 }
-.palm-left  { left: 2%; animation-delay: 0s; }
-.palm-right { right: 2%; animation-delay: 1s; transform-origin: bottom center; }
-@keyframes palmSway { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+@keyframes coralSway {
+  0%   { transform: rotate(var(--sway-start)); }
+  100% { transform: rotate(var(--sway-end)); }
+}
 
-/* ── SEAGULLS ── */
-.gull {
-  position: fixed; z-index: 6; font-size: 1.4rem;
-  animation: gullFly linear infinite;
-  opacity: 0.8;
+/* ── SEA CREATURES ── */
+.creature {
+  position: fixed; z-index: 6;
+  font-size: 2.2rem; user-select: none;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,0.25));
 }
-@keyframes gullFly {
-  0%   { transform: translateX(-80px) translateY(0); opacity:0; }
-  10%  { opacity: 0.8; }
-  50%  { transform: translateX(50vw) translateY(-20px); }
-  90%  { opacity: 0.8; }
-  100% { transform: translateX(110vw) translateY(10px); opacity:0; }
+
+/* Fish swimming left to right */
+.fish-lr {
+  animation: swimLR linear infinite;
 }
+@keyframes swimLR {
+  0%   { transform: translateX(-120px) translateY(0); opacity: 0; }
+  5%   { opacity: 1; }
+  48%  { transform: translateX(53vw) translateY(var(--bob-mid)); }
+  95%  { opacity: 1; }
+  100% { transform: translateX(110vw) translateY(var(--bob-end)); opacity: 0; }
+}
+
+/* All fish swim left-to-right - staggered delays create natural ocean feel */
+
+/* Turtle (slow, majestic) */
+.turtle {
+  animation: turtleSwim linear infinite;
+}
+@keyframes turtleSwim {
+  0%   { transform: translateX(-150px) translateY(0) rotate(-3deg); opacity: 0; }
+  8%   { opacity: 1; }
+  50%  { transform: translateX(50vw) translateY(-20px) rotate(2deg); }
+  92%  { opacity: 1; }
+  100% { transform: translateX(110vw) translateY(-5px) rotate(-2deg); opacity: 0; }
+}
+
+/* Octopus (bobs and drifts) */
+.octopus {
+  animation: octopusDrift ease-in-out infinite;
+}
+@keyframes octopusDrift {
+  0%,100% { transform: translateY(0) rotate(-5deg); }
+  33%     { transform: translateY(-18px) rotate(3deg); }
+  66%     { transform: translateY(-8px) rotate(-2deg); }
+}
+
+/* School of fish (group) */
+.school {
+  position: fixed; z-index: 6;
+  display: flex; gap: 6px;
+  animation: schoolSwim linear infinite;
+  pointer-events: none;
+}
+@keyframes schoolSwim {
+  0%   { transform: translateX(-200px); opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { transform: translateX(110vw); opacity: 0; }
+}
+.school-fish { font-size: 1.1rem; }
 
 /* ── MAIN CONTENT ── */
 .content {
   position: relative; z-index: 10;
   min-height: 100vh;
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 20px 20px 120px;
+  align-items: center; justify-content: flex-start;
+  padding: 28px 20px 160px;
 }
 
-/* ── MAIN CARD ── */
+/* ── MILESTONE ── */
+.milestone {
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 50px; padding: 10px 28px;
+  margin-bottom: 16px; font-size: 14px;
+  font-weight: 800; color: #ffffff;
+  text-align: center; max-width: 700px; width: 100%;
+  display: none; letter-spacing: 0.5px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.milestone.show { display: block; animation: popIn 0.4s ease; }
+@keyframes popIn { from{transform:scale(0.85);opacity:0} to{transform:scale(1);opacity:1} }
+
+/* ── MAIN CARD (frosted glass) ── */
 .main-card {
-  background: rgba(255,255,255,0.18);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,0.35);
-  border-radius: 32px;
-  padding: 40px 48px;
-  text-align: center;
-  max-width: 700px; width: 100%;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.4);
-  margin-bottom: 20px;
+  background: rgba(255,255,255,0.14);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 32px; padding: 36px 48px;
+  text-align: center; max-width: 700px; width: 100%;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.35),
+    inset 0 -1px 0 rgba(255,255,255,0.1);
+  margin-bottom: 16px;
+  position: relative; overflow: hidden;
+}
+/* Subtle water caustic shimmer on card */
+.main-card::before {
+  content: '';
+  position: absolute; inset: 0; border-radius: 32px;
+  background: radial-gradient(ellipse at 30% 20%, rgba(160,230,255,0.12), transparent 60%),
+              radial-gradient(ellipse at 70% 80%, rgba(100,200,240,0.08), transparent 50%);
+  pointer-events: none; animation: caustic 6s ease-in-out infinite alternate;
+}
+@keyframes caustic {
+  0%   { opacity: 0.6; transform: scale(1); }
+  100% { opacity: 1;   transform: scale(1.05); }
 }
 
 .headline {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(1.1rem, 3vw, 1.5rem);
-  color: rgba(255,255,255,0.9);
-  letter-spacing: 3px;
-  text-transform: uppercase;
+  font-size: clamp(0.95rem, 2vw, 1.2rem);
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 3px; text-transform: uppercase;
   margin-bottom: 6px;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  text-shadow: 0 2px 8px rgba(0,0,80,0.3);
 }
 
 .big-number {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(5rem, 18vw, 10rem);
-  font-weight: 900;
-  color: #ffffff;
-  line-height: 0.9;
-  text-shadow: 0 4px 30px rgba(0,0,0,0.25), 0 0 60px rgba(255,255,255,0.2);
-  margin: 10px 0;
-  animation: numberPulse 2s ease-in-out infinite;
+  font-size: clamp(5rem, 16vw, 9.5rem);
+  font-weight: 900; color: #ffffff; line-height: 0.92;
+  text-shadow:
+    0 4px 20px rgba(0,100,180,0.4),
+    0 0 60px rgba(160,230,255,0.3);
+  margin: 8px 0;
 }
-@keyframes numberPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.01)} }
 
 .days-label {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(1.4rem, 4vw, 2.2rem);
-  color: rgba(255,255,255,0.95);
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  margin-bottom: 20px;
+  font-size: clamp(1.3rem, 3.5vw, 2rem);
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 6px; text-transform: uppercase;
+  margin-bottom: 18px;
+  text-shadow: 0 2px 8px rgba(0,0,80,0.3);
 }
 
-/* ── HMS ROW ── */
-.hms-row {
-  display: flex; gap: 16px; justify-content: center;
-  margin-bottom: 24px;
-}
+.hms-row { display: flex; gap: 14px; justify-content: center; margin-bottom: 22px; }
 .hms-unit {
-  background: rgba(255,255,255,0.2);
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 16px; padding: 12px 20px;
-  min-width: 80px;
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 16px; padding: 11px 18px; min-width: 76px;
 }
 .hms-num {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(1.6rem, 4vw, 2.2rem);
-  font-weight: 700; color: #fff;
-  line-height: 1;
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-weight: 700; color: #e0f6ff; line-height: 1;
 }
 .hms-lbl {
   font-size: 10px; letter-spacing: 2px;
-  text-transform: uppercase; color: rgba(255,255,255,0.7);
-  margin-top: 4px;
+  text-transform: uppercase; color: rgba(255,255,255,0.6); margin-top: 3px;
 }
 
-/* ── AFFIRMATION ── */
 .affirmation {
-  font-size: clamp(0.95rem, 2vw, 1.1rem);
-  color: rgba(255,255,255,0.95);
-  font-weight: 700;
-  font-style: italic;
-  background: rgba(255,255,255,0.15);
-  border-radius: 50px;
-  padding: 10px 24px;
-  display: inline-block;
-  border: 1px solid rgba(255,255,255,0.25);
+  font-size: clamp(0.88rem, 1.6vw, 1rem);
+  color: rgba(255,255,255,0.95); font-weight: 700; font-style: italic;
+  background: rgba(255,255,255,0.12); border-radius: 50px;
+  padding: 10px 22px; display: inline-block;
+  border: 1px solid rgba(255,255,255,0.25); line-height: 1.5;
+  text-shadow: 0 1px 4px rgba(0,0,80,0.2);
 }
 
-/* ── STATS ROW ── */
+/* ── STATS ── */
 .stats-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  max-width: 700px; width: 100%;
-  margin-bottom: 20px;
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 12px; max-width: 700px; width: 100%; margin-bottom: 18px;
 }
 .stat-card {
-  background: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.14);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 20px; padding: 18px 10px;
-  text-align: center;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 20px; padding: 18px 10px; text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }
-.stat-emoji { font-size: 1.6rem; margin-bottom: 6px; }
+.stat-emoji { font-size: 1.5rem; margin-bottom: 5px; }
 .stat-num {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(1.3rem, 3vw, 1.8rem);
-  font-weight: 700; color: #fff;
-  line-height: 1; margin-bottom: 4px;
+  font-size: clamp(1.3rem, 2.8vw, 1.7rem);
+  font-weight: 700; color: #e0f6ff; line-height: 1; margin-bottom: 3px;
+  text-shadow: 0 2px 8px rgba(0,0,80,0.2);
 }
 .stat-label {
-  font-size: 11px; letter-spacing: 1px;
-  color: rgba(255,255,255,0.75);
-  text-transform: uppercase; font-weight: 600;
+  font-size: 10px; letter-spacing: 1px;
+  color: rgba(255,255,255,0.7); text-transform: uppercase; font-weight: 700;
 }
 
-/* ── PROGRESS BAR ── */
+/* ── PROGRESS BAR — bold and prominent ── */
 .progress-wrap {
-  max-width: 700px; width: 100%; margin-bottom: 20px;
+  max-width: 700px; width: 100%; margin-bottom: 16px;
+  background: rgba(255,255,255,0.14);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 20px; padding: 16px 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }
 .progress-top {
-  display: flex; justify-content: space-between;
-  font-size: 12px; color: rgba(255,255,255,0.8);
-  margin-bottom: 6px; font-weight: 700; letter-spacing: 0.5px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px;
+}
+.progress-end-label {
+  font-size: 13px; color: #ffffff;
+  font-weight: 800; letter-spacing: 0.5px;
+  text-shadow: 0 1px 4px rgba(0,0,80,0.3);
+}
+.progress-mid-label {
+  font-size: 13px; color: rgba(255,255,255,0.9);
+  font-weight: 700; text-align: center;
+  text-shadow: 0 1px 4px rgba(0,0,80,0.3);
 }
 .progress-track {
-  height: 10px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 5px; overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.25);
+  height: 18px; background: rgba(0,0,0,0.2);
+  border-radius: 9px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
 }
 .progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #ffd54f, #ffab40, #ff7043);
-  border-radius: 5px;
+  height: 100%; border-radius: 9px;
+  background: linear-gradient(90deg, #e09820, #f8c840, #ffe060);
   transition: width 1s ease;
-  position: relative; overflow: hidden;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(240,180,0,0.5), 0 0 16px rgba(255,220,0,0.3);
 }
 .progress-fill::after {
   content: '';
   position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
-  animation: shimmer 2s linear infinite;
+  background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+  border-radius: 9px;
 }
-@keyframes shimmer { from{transform:translateX(-100%)} to{transform:translateX(100%)} }
-
-/* ── MILESTONE ── */
-.milestone {
-  background: rgba(255,220,50,0.25);
-  border: 1px solid rgba(255,220,50,0.5);
-  border-radius: 16px; padding: 12px 24px;
-  margin-bottom: 16px;
-  font-size: 14px; font-weight: 700;
-  color: #fff;
-  text-align: center;
-  max-width: 700px; width: 100%;
-  display: none;
-}
-.milestone.show { display: block; animation: popIn 0.4s ease; }
-@keyframes popIn { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} }
 
 /* ── SETTINGS ── */
 .settings-toggle {
   position: fixed; top: 16px; right: 16px; z-index: 20;
-  background: rgba(255,255,255,0.2); backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.35);
-  border-radius: 50%; width: 44px; height: 44px;
+  background: rgba(255,255,255,0.18); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.3); border-radius: 50%;
+  width: 44px; height: 44px;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 1.2rem;
-  transition: background 0.2s;
+  cursor: pointer; font-size: 1.2rem; transition: background 0.2s;
 }
-.settings-toggle:hover { background: rgba(255,255,255,0.35); }
+.settings-toggle:hover { background: rgba(255,255,255,0.3); }
 
 .settings-panel {
   position: fixed; top: 68px; right: 16px; z-index: 20;
-  background: rgba(255,255,255,0.95); backdrop-filter: blur(16px);
-  border-radius: 20px; padding: 20px 24px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.2);
-  display: none; min-width: 260px;
+  background: rgba(0,40,80,0.96); backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.2); border-radius: 20px;
+  padding: 20px 24px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  display: none; min-width: 260px; color: white;
 }
 .settings-panel.open { display: block; animation: popIn 0.2s ease; }
-.settings-title { font-weight: 800; font-size: 14px; color: #333; margin-bottom: 14px; }
+.settings-title { font-weight: 800; font-size: 14px; margin-bottom: 14px; color: #80d0ff; }
 .settings-field { margin-bottom: 12px; }
-.settings-field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 6px; }
-.settings-field input { width: 100%; padding: 9px 12px; border: 1px solid #ddd; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 14px; color: #333; }
-.settings-field input:focus { outline: none; border-color: #f4956a; }
-.save-btn { width: 100%; padding: 10px; background: linear-gradient(135deg, #f4956a, #c5566e); color: white; border: none; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
-.save-btn:hover { opacity: 0.9; }
+.settings-field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 6px; }
+.settings-field input { width: 100%; padding: 9px 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 14px; color: white; }
+.settings-field input:focus { outline: none; border-color: #80d0ff; }
+.save-btn { width: 100%; padding: 10px; background: linear-gradient(135deg, #0080c0, #004880); color: white; border: none; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 4px; }
+.save-btn:hover { opacity: 0.88; }
 
-/* ── FIREWORKS (end state) ── */
+/* ── FIREWORKS ── */
 .firework {
   position: fixed; z-index: 50; pointer-events: none;
-  width: 6px; height: 6px; border-radius: 50%;
+  width: 8px; height: 8px; border-radius: 50%;
   animation: explode 1.5s ease-out forwards;
 }
 @keyframes explode {
-  0%   { transform: translate(0,0) scale(1); opacity: 1; }
-  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+  0%   { transform:translate(0,0) scale(1); opacity:1; }
+  100% { transform:translate(var(--tx),var(--ty)) scale(0); opacity:0; }
 }
 </style>
 </head>
 <body>
 
-<!-- Background layers -->
-<div class="sky"></div>
-<div class="sun">
-  <div class="sun-core"></div>
-</div>
-<div class="ocean">
-  <div class="wave wave1"></div>
-  <div class="wave wave2"></div>
-  <div class="wave wave3"></div>
-</div>
-<div class="beach"></div>
-<div class="palm palm-left">🌴</div>
-<div class="palm palm-right">🌴</div>
+<!-- Background -->
+<div class="water"></div>
+<div class="rays" id="rays"></div>
+<div class="surface"></div>
+
+<!-- Sandy bottom -->
+<div class="sand"></div>
+
+<!-- Coral — more pieces, varied sizes -->
+<div class="coral" style="left:2%;   bottom:90px;  font-size:4rem;   --sway-start:-4deg; --sway-end:4deg;   animation-duration:3s;">🪸</div>
+<div class="coral" style="left:8%;   bottom:82px;  font-size:2.2rem; --sway-start:-3deg; --sway-end:5deg;   animation-duration:4s;">🪸</div>
+<div class="coral" style="left:14%;  bottom:88px;  font-size:3rem;   --sway-start:-5deg; --sway-end:3deg;   animation-duration:3.5s;">🌿</div>
+<div class="coral" style="left:20%;  bottom:84px;  font-size:1.8rem; --sway-start:-4deg; --sway-end:4deg;   animation-duration:2.8s;">🪸</div>
+<div class="coral" style="left:28%;  bottom:90px;  font-size:2.6rem; --sway-start:-3deg; --sway-end:5deg;   animation-duration:4.2s;">🌿</div>
+<div class="coral" style="left:36%;  bottom:80px;  font-size:1.6rem; --sway-start:-5deg; --sway-end:3deg;   animation-duration:3.2s;">🪸</div>
+<div class="coral" style="left:43%;  bottom:86px;  font-size:3.4rem; --sway-start:-3deg; --sway-end:4deg;   animation-duration:3.8s;">🪸</div>
+<div class="coral" style="left:51%;  bottom:82px;  font-size:2rem;   --sway-start:-4deg; --sway-end:3deg;   animation-duration:3s;">🌿</div>
+<div class="coral" style="left:58%;  bottom:88px;  font-size:4.2rem; --sway-start:-3deg; --sway-end:5deg;   animation-duration:4.5s;">🪸</div>
+<div class="coral" style="left:66%;  bottom:84px;  font-size:1.8rem; --sway-start:-5deg; --sway-end:3deg;   animation-duration:3.2s;">🪸</div>
+<div class="coral" style="left:73%;  bottom:90px;  font-size:2.8rem; --sway-start:-4deg; --sway-end:4deg;   animation-duration:3.6s;">🌿</div>
+<div class="coral" style="left:80%;  bottom:82px;  font-size:1.6rem; --sway-start:-3deg; --sway-end:5deg;   animation-duration:2.9s;">🪸</div>
+<div class="coral" style="left:86%;  bottom:88px;  font-size:3.6rem; --sway-start:-4deg; --sway-end:3deg;   animation-duration:4s;">🪸</div>
+<div class="coral" style="left:92%;  bottom:84px;  font-size:2.4rem; --sway-start:-3deg; --sway-end:5deg;   animation-duration:3.4s;">🌿</div>
+<div class="coral" style="left:96%;  bottom:90px;  font-size:1.8rem; --sway-start:-5deg; --sway-end:4deg;   animation-duration:3s;">🪸</div>
+
+<!-- Sea creatures (behind content via z-index) -->
+<div id="creatures"></div>
+
+<!-- Bubbles -->
+<div id="bubbles"></div>
 
 <!-- Settings -->
 <div class="settings-toggle" onclick="toggleSettings()">⚙️</div>
 <div class="settings-panel" id="settings">
   <div class="settings-title">⚙️ Settings</div>
   <div class="settings-field">
-    <label>Last Day of School</label>
+    <label>Last Day (date)</label>
     <input type="date" id="end-date-input"/>
+  </div>
+  <div class="settings-field">
+    <label>End Time</label>
+    <input type="time" id="end-time-input"/>
   </div>
   <div class="settings-field">
     <label>Your Name / School</label>
@@ -360,11 +462,10 @@ body {
 
 <!-- Main content -->
 <div class="content">
-
   <div class="milestone" id="milestone"></div>
 
   <div class="main-card">
-    <div class="headline" id="headline">☀️ Countdown to Summer</div>
+    <div class="headline" id="headline">🐠 Countdown to Holidays</div>
     <div class="big-number" id="big-days">--</div>
     <div class="days-label">Days to Go</div>
     <div class="hms-row">
@@ -384,7 +485,7 @@ body {
     <div class="stat-card">
       <div class="stat-emoji">📊</div>
       <div class="stat-num" id="stat-pct">--%</div>
-      <div class="stat-label">Year Complete</div>
+      <div class="stat-label">Semester Complete</div>
     </div>
     <div class="stat-card">
       <div class="stat-emoji">☕</div>
@@ -395,243 +496,334 @@ body {
 
   <div class="progress-wrap">
     <div class="progress-top">
-      <span id="prog-start">Sep 1</span>
-      <span id="prog-pct-label">0% of the year done</span>
-      <span id="prog-end">Jun 30 🏖️</span>
+      <span class="progress-end-label">✏️ Aug 31</span>
+      <span class="progress-mid-label" id="prog-pct-label">0% of the semester done</span>
+      <span class="progress-end-label">Jan 20 🏖️</span>
     </div>
     <div class="progress-track">
       <div class="progress-fill" id="progress-fill" style="width:0%"></div>
     </div>
   </div>
-
 </div>
 
 <script>
-// ── DEFAULTS ──────────────────────────────────────────────────────────────────
-const DEFAULT_END   = "2026-06-30";
-const DEFAULT_START = "2025-09-01"; // approximate school year start
-const COFFEES_PER_DAY = 2;
+const DEFAULT_END_DATE = "2026-01-20";
+const DEFAULT_END_TIME = "16:30";
+const SEMESTER_START   = new Date("2025-08-31T07:30:00");
+const COFFEES_PER_DAY  = 2;
 
-// ── AFFIRMATIONS ──────────────────────────────────────────────────────────────
 const affirmations = [
-  "You are literally shaping the future. One lesson at a time. 🌟",
-  "The best teachers don't just teach subjects — they teach humans. That's you. 💛",
-  "Somewhere a student still thinks about something you said. 🎓",
-  "You've survived 100% of your hard days so far. Perfect record. 💪",
-  "Sandy toes and zero lesson plans are almost within reach. 🏖️",
-  "You don't just have a job. You have a calling. And summer. 🌴",
-  "The school year is like a coconut — hard on the outside, but worth it. 🥥",
-  "Think about how good that first day of summer is going to feel. ☀️",
+  "Even fish know when it's time to keep swimming. You're almost there. 🐠",
+  "You've been teaching all semester. The current is finally turning your way. 🌊",
+  "Somewhere out there, a beach is waiting. It has been very patient. 🏖️",
+  "You've answered more questions this semester than a search engine. Respect. 🔍",
+  "You don't just have a job. You have a calling. And a holiday. 🐚",
+  "Like the sea turtle — steady, graceful, and headed exactly where you need to go. 🐢",
+  "The holidays don't care about your inbox. And soon, neither will you. 📭",
   "Every student you believe in believes in themselves a little more. ✨",
+  "You've survived 100% of your hard days so far. Perfect record. 💪",
+  "Think about how good that first morning of holidays is going to feel. ☕",
+  "Teachers are like coral reefs — endlessly giving life to things around them. 🪸",
+  "No meetings. No marking. No Monday alarm. The tide is turning. 😌",
+  "A little progress each day adds up to big results — and big holidays. 🧳",
   "You're not just counting down. You're finishing strong. 🏁",
-  "No meetings. No marking. No Monday alarm. Soon. Very soon. 😌",
-  "A little progress each day adds up to big results — and big vacations. 🧳",
-  "The ocean is waiting. It has been patient. You've been patient too. 🌊",
-  "You've answered more questions this year than Google. Respect. 🔍",
-  "Summer doesn't care about your inbox. And soon, neither will you. 📭",
-  "Your future self on a beach chair sends their deepest gratitude. 🪑",
-  "Plot twist: the real treasure was the summer you earned along the way. 💎",
-  "You're in the final chapters. Make them count. 📖",
-  "The countdown is real. The beach is real. YOU are real. 🌞",
-  "Hang in there. The forecast is 100% sunshine with a chance of zero responsibilities. ⛅",
+  "The deep end of the semester is behind you. Clear water ahead. 🤿",
+  "Your future self on a lounger somewhere sends their deepest gratitude. 🪑",
+  "Even the ocean takes a breath. Yours is coming soon. 🌊",
+  "Plot twist: the real treasure was the semester you survived along the way. 💎",
+  "You're in the final approach. The surface is right there. 🫧",
+  "100% chance of doing absolutely nothing for a while. 🐠",
+  "Every Monday you survive is one fewer standing between you and freedom. 📅",
+  "Teachers don't get tired. They get... very very tired. But then they get holidays. 😴",
+  "Like a clownfish finding home — you're almost back to your anemone. 🐟",
+  "Dive deep. Work hard. Surface soon. 🤿",
+  "The reef is beautiful. But so is what's waiting on the other side of the holiday. 🌴",
 ];
 
-// ── STATE ─────────────────────────────────────────────────────────────────────
-let endDate   = new Date(localStorage.getItem('summer_end')   || DEFAULT_END);
-let startDate = new Date(DEFAULT_START);
-let userName  = localStorage.getItem('summer_name') || '';
-let tickTimer;
-
-// ── SEAGULLS ─────────────────────────────────────────────────────────────────
-function makeGulls() {
-  for (let i = 0; i < 4; i++) {
-    const g = document.createElement('div');
-    g.className = 'gull';
-    g.textContent = '🕊️';
-    g.style.top  = (8 + Math.random() * 25) + '%';
-    g.style.animationDuration  = (18 + Math.random() * 20) + 's';
-    g.style.animationDelay     = (Math.random() * 20) + 's';
-    g.style.fontSize = (0.9 + Math.random() * 0.8) + 'rem';
-    document.body.appendChild(g);
-  }
+function getEndDateTime() {
+  const d = localStorage.getItem('holidays_end_date') || DEFAULT_END_DATE;
+  const t = localStorage.getItem('holidays_end_time') || DEFAULT_END_TIME;
+  const [h, m] = t.split(':').map(Number);
+  const dt = new Date(d + 'T00:00:00');
+  dt.setHours(h, m, 0, 0);
+  return dt;
 }
 
-// ── SUN RAYS ─────────────────────────────────────────────────────────────────
-function makeSunRays() {
-  const sun = document.querySelector('.sun');
-  for (let i = 0; i < 12; i++) {
-    const ray = document.createElement('div');
-    ray.className = 'sun-ray';
-    const len = 18 + Math.random() * 14;
-    ray.style.cssText = `
-      height: ${len}px;
-      margin-left: -2px;
-      margin-top: ${-(45 + len)}px;
-      transform: rotate(${i * 30}deg);
-    `;
-    sun.appendChild(ray);
-  }
-}
-
-// ── CLOUDS ───────────────────────────────────────────────────────────────────
-function makeClouds() {
-  const configs = [
-    { top:'8%',  w:160, h:40, dur:45, delay:-10 },
-    { top:'14%', w:220, h:55, dur:60, delay:-25 },
-    { top:'6%',  w:120, h:30, dur:35, delay:-5  },
-    { top:'18%', w:180, h:45, dur:55, delay:-40 },
-  ];
-  configs.forEach(c => {
-    const el = document.createElement('div');
-    el.className = 'cloud';
-    el.style.cssText = `
-      top:${c.top}; width:${c.w}px; height:${c.h}px;
-      animation-duration:${c.dur}s; animation-delay:${c.delay}s;
-    `;
-    el.style.before = '';
-    document.body.appendChild(el);
-  });
-}
-
-// ── DAILY AFFIRMATION (same all day, changes daily) ──────────────────────────
 function getAffirmation() {
   const day = Math.floor(Date.now() / 86400000);
   return affirmations[day % affirmations.length];
 }
 
-// ── MILESTONES ────────────────────────────────────────────────────────────────
-function checkMilestone(days) {
-  const milestones = {
-    60: "🎉 60 days! The finish line is in sight!",
-    30: "🏃 One month to go! You're in the home stretch!",
-    20: "✨ 20 days! Start planning what you'll do first!",
-    14: "🌴 Two weeks! Can you SMELL the sunscreen?",
-    10: "🔥 10 days! Double digits no more soon!",
-    7:  "🎊 One week left! SEVEN DAYS!",
-    5:  "🌊 Five days! The ocean is calling!",
-    3:  "⚡ THREE DAYS. Count them. THREE.",
-    2:  "😱 TWO DAYS. This is not a drill.",
-    1:  "🚨 TOMORROW IS THE LAST DAY! 🚨",
-    0:  "🏖️ IT'S HERE! SUMMER HAS ARRIVED! 🎉🌴🎉",
-  };
+function checkMilestone(days, isBeforeStart) {
   const el = document.getElementById('milestone');
-  if (milestones[days] !== undefined) {
-    el.textContent = milestones[days];
-    el.classList.add('show');
+  if (isBeforeStart) {
+    el.textContent = "🐠 Ready to dive in! Semester begins August 31 — the water's warm!";
+    el.classList.add('show'); return;
+  }
+  const map = {
+    60: "🐠 60 days! The current is moving in the right direction!",
+    30: "🌊 One month to go! You can almost taste the salt air!",
+    20: "🐢 20 days! The turtle is almost at the surface!",
+    14: "🤿 Two weeks! Time to start thinking about what you'll do first!",
+    10: "🐡 10 days! Nearly there — keep swimming!",
+     7: "🎊 One week left! SEVEN DAYS!",
+     5: "🐚 Five days! You can hear the waves!",
+     3: "⚡ THREE DAYS. Almost surfaced.",
+     2: "😱 TWO DAYS. This is not a drill.",
+     1: "🚨 TOMORROW IS THE LAST DAY! 🚨",
+     0: "🏖️ HOLIDAYS ARE HERE! SURFACE! 🎉🐠🎉",
+  };
+  if (map[days] !== undefined) {
+    el.textContent = map[days]; el.classList.add('show');
   } else {
     el.classList.remove('show');
   }
 }
 
-// ── FIREWORKS (day 0) ─────────────────────────────────────────────────────────
 function launchFireworks() {
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 70; i++) {
     setTimeout(() => {
       const fw = document.createElement('div');
       fw.className = 'firework';
-      const colors = ['#ff6b6b','#ffd166','#06d6a0','#118ab2','#f4a261','#fff'];
-      fw.style.background = colors[Math.floor(Math.random() * colors.length)];
-      fw.style.left = (20 + Math.random() * 60) + 'vw';
-      fw.style.top  = (10 + Math.random() * 50) + 'vh';
+      const cols = ['#ff6b6b','#ffd166','#06d6a0','#80d0ff','#f9a8d4','#ffffff','#ffa500'];
+      fw.style.background = cols[Math.floor(Math.random() * cols.length)];
+      fw.style.left = (10 + Math.random() * 80) + 'vw';
+      fw.style.top  = (5  + Math.random() * 70) + 'vh';
       const angle = Math.random() * Math.PI * 2;
-      const dist  = 60 + Math.random() * 120;
+      const dist  = 80 + Math.random() * 150;
       fw.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
       fw.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
       document.body.appendChild(fw);
-      setTimeout(() => fw.remove(), 1600);
-    }, Math.random() * 3000);
+      setTimeout(() => fw.remove(), 1800);
+    }, Math.random() * 3500);
   }
 }
 
-// ── TICK ──────────────────────────────────────────────────────────────────────
+let tickTimer;
 function tick() {
   const now  = new Date();
-  const end  = new Date(endDate);
-  end.setHours(16, 0, 0, 0); // 4:00 PM last day
+  const end  = getEndDateTime();
+  const isBeforeStart = now < SEMESTER_START;
 
-  const diffMs   = end - now;
+  const diffMs    = end - now;
   const totalDays = Math.max(0, Math.ceil(diffMs / 86400000));
   const diffSecs  = Math.max(0, Math.floor(diffMs / 1000));
   const hours     = Math.floor((diffSecs % 86400) / 3600);
   const mins      = Math.floor((diffSecs % 3600) / 60);
   const secs      = diffSecs % 60;
 
-  // Big number
   document.getElementById('big-days').textContent = totalDays;
   document.getElementById('hms-h').textContent = String(hours).padStart(2,'0');
   document.getElementById('hms-m').textContent = String(mins).padStart(2,'0');
   document.getElementById('hms-s').textContent = String(secs).padStart(2,'0');
 
-  // Mondays remaining
+  // Mondays
   let mondays = 0;
   const cur = new Date(now);
-  while (cur <= end) {
-    if (cur.getDay() === 1) mondays++;
-    cur.setDate(cur.getDate() + 1);
-  }
+  while (cur <= end) { if (cur.getDay() === 1) mondays++; cur.setDate(cur.getDate()+1); }
   document.getElementById('stat-mondays').textContent = mondays;
-
-  // Coffees
   document.getElementById('stat-coffees').textContent = totalDays * COFFEES_PER_DAY;
 
   // Progress
-  const yearStart = new Date(DEFAULT_START);
-  const totalYear = end - yearStart;
-  const elapsed   = now - yearStart;
-  const pct       = Math.min(100, Math.max(0, Math.round((elapsed / totalYear) * 100)));
+  let pct = 0;
+  if (!isBeforeStart) {
+    const totalSem = end - SEMESTER_START;
+    const elapsed  = now - SEMESTER_START;
+    pct = Math.min(100, Math.max(0, Math.round((elapsed / totalSem) * 100)));
+  }
   document.getElementById('stat-pct').textContent = pct + '%';
   document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('prog-pct-label').textContent = pct + '% of the year done';
+  document.getElementById('prog-pct-label').textContent =
+    isBeforeStart ? '🐠 Semester starts Aug 31!' : pct + '% of the semester done';
 
-  // End date label
-  const endFmt = end.toLocaleDateString('en-US', { month:'short', day:'numeric' });
-  document.getElementById('prog-end').textContent = endFmt + ' 🏖️';
-
-  // Headline
-  const name = localStorage.getItem('summer_name') || '';
+  const name = localStorage.getItem('holidays_name') || '';
   document.getElementById('headline').textContent =
-    name ? `☀️ ${name} — Countdown to Summer` : '☀️ Countdown to Summer';
+    name ? `🐠 ${name} — Countdown to Holidays` : '🐠 Countdown to Holidays';
 
-  // Affirmation
   document.getElementById('affirmation').textContent = '"' + getAffirmation() + '"';
-
-  // Milestone
-  checkMilestone(totalDays);
-
-  // Fireworks if done
-  if (totalDays === 0 && secs === 0 && mins === 0 && hours === 0) {
-    launchFireworks();
-  }
+  checkMilestone(totalDays, isBeforeStart);
+  if (!isBeforeStart && diffSecs === 0) launchFireworks();
 
   tickTimer = setTimeout(tick, 1000);
 }
 
-// ── SETTINGS ─────────────────────────────────────────────────────────────────
-function toggleSettings() {
-  document.getElementById('settings').classList.toggle('open');
-}
-
+function toggleSettings() { document.getElementById('settings').classList.toggle('open'); }
 function saveSettings() {
   const d = document.getElementById('end-date-input').value;
+  const t = document.getElementById('end-time-input').value;
   const n = document.getElementById('name-input').value.trim();
-  if (d) {
-    endDate = new Date(d);
-    localStorage.setItem('summer_end', d);
-  }
-  if (n !== undefined) localStorage.setItem('summer_name', n);
+  if (d) localStorage.setItem('holidays_end_date', d);
+  if (t) localStorage.setItem('holidays_end_time', t);
+  localStorage.setItem('holidays_name', n);
   document.getElementById('settings').classList.remove('open');
 }
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
-window.onload = () => {
-  // Pre-fill settings
-  const saved = localStorage.getItem('summer_end') || DEFAULT_END;
-  document.getElementById('end-date-input').value = saved;
-  document.getElementById('name-input').value = localStorage.getItem('summer_name') || '';
+// ── BUILD LIGHT RAYS ──────────────────────────────────────────────────────────
+function makeRays() {
+  const wrap = document.getElementById('rays');
+  const configs = [
+    { left:'8%',  w:60,  op:0.18, start:-12, end:-6,  dur:5  },
+    { left:'18%', w:90,  op:0.22, start:-6,  end:2,   dur:7  },
+    { left:'30%', w:70,  op:0.16, start:-4,  end:4,   dur:6  },
+    { left:'44%', w:110, op:0.25, start:-8,  end:6,   dur:8  },
+    { left:'58%', w:80,  op:0.20, start:4,   end:-4,  dur:5.5},
+    { left:'70%', w:95,  op:0.22, start:6,   end:-2,  dur:7  },
+    { left:'82%', w:65,  op:0.17, start:8,   end:2,   dur:6  },
+    { left:'92%', w:50,  op:0.15, start:10,  end:4,   dur:5  },
+  ];
+  configs.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'ray';
+    el.style.cssText = `
+      left:${c.left}; width:${c.w}px;
+      --op:${c.op};
+      --start-angle:${c.start}deg;
+      --end-angle:${c.end}deg;
+      animation-duration:${c.dur}s;
+      animation-delay:${-Math.random()*c.dur}s;
+    `;
+    wrap.appendChild(el);
+  });
+}
 
-  makeGulls();
-  makeSunRays();
-  makeClouds();
+// ── BUILD BUBBLES ─────────────────────────────────────────────────────────────
+function makeBubbles() {
+  const wrap = document.getElementById('bubbles');
+  for (let i = 0; i < 20; i++) {
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    const sz = 4 + Math.random() * 12;
+    b.style.cssText = `
+      left:${Math.random()*100}%;
+      bottom:${80 + Math.random()*200}px;
+      width:${sz}px; height:${sz}px;
+      --drift:${-20+Math.random()*40}px;
+      animation-duration:${40+Math.random()*30}s;
+      animation-delay:${Math.random()*30}s;
+    `;
+    wrap.appendChild(b);
+  }
+}
+
+// ── BUILD SEA CREATURES ───────────────────────────────────────────────────────
+function makeCreatures() {
+  const wrap = document.getElementById('creatures');
+
+  // All fish swim left-to-right — emoji face right via scaleX(-1) since fish glyphs default face left
+  const allFish = [
+    { emoji:'🐠', top:'22%', dur:18, delay:0,   size:'3.2rem', bobMid:'-15px', bobEnd:'5px'  },
+    { emoji:'🐡', top:'55%', dur:25, delay:8,   size:'3rem',   bobMid:'10px',  bobEnd:'-8px' },
+    { emoji:'🐟', top:'38%', dur:20, delay:14,  size:'2.8rem', bobMid:'-8px',  bobEnd:'12px' },
+    { emoji:'🦈', top:'48%', dur:35, delay:5,   size:'7rem',   bobMid:'5px',   bobEnd:'-5px' },
+    { emoji:'🐠', top:'68%', dur:22, delay:18,  size:'2.6rem', bobMid:'-10px', bobEnd:'8px'  },
+    { emoji:'🐬', top:'28%', dur:30, delay:22,  size:'7rem',   bobMid:'-18px', bobEnd:'10px' },
+    { emoji:'🐡', top:'72%', dur:18, delay:9,   size:'2.4rem', bobMid:'8px',   bobEnd:'-6px' },
+    { emoji:'🐟', top:'30%', dur:28, delay:3,   size:'3rem',   bobMid:'12px',  bobEnd:'-6px' },
+    { emoji:'🐠', top:'60%', dur:24, delay:12,  size:'3.4rem', bobMid:'-12px', bobEnd:'6px'  },
+    { emoji:'🐡', top:'44%', dur:19, delay:7,   size:'2.8rem', bobMid:'8px',   bobEnd:'-10px'},
+    { emoji:'🐟', top:'18%', dur:32, delay:16,  size:'2.4rem', bobMid:'-10px', bobEnd:'8px'  },
+  ];
+  allFish.forEach(f => {
+    const el = document.createElement('div');
+    el.className = 'creature fish-lr';
+    el.style.cssText = `
+      top:${f.top}; left:0; font-size:${f.size};
+      --bob-mid:${f.bobMid}; --bob-end:${f.bobEnd};
+      animation-duration:${f.dur}s;
+      animation-delay:-${f.delay}s;
+    `;
+    // Fish emoji glyphs face LEFT by default — flip them so they face RIGHT (direction of travel)
+    const span = document.createElement('span');
+    span.style.display = 'inline-block';
+    span.style.transform = 'scaleX(-1)';
+    span.textContent = f.emoji;
+    el.appendChild(span);
+    wrap.appendChild(el);
+  });
+
+  // Sea turtle (slow and majestic)
+  const turtle = document.createElement('div');
+  turtle.className = 'creature turtle';
+  turtle.textContent = '🐢';
+  turtle.style.cssText = `top:35%; left:0; font-size:3.2rem; animation-duration:45s; animation-delay:-10s;`;
+  wrap.appendChild(turtle);
+
+  // Second turtle
+  const turtle2 = document.createElement('div');
+  turtle2.className = 'creature turtle';
+  turtle2.textContent = '🐢';
+  turtle2.style.cssText = `top:62%; left:0; font-size:2.4rem; animation-duration:55s; animation-delay:-28s;`;
+  wrap.appendChild(turtle2);
+
+  // Octopus (bobbing near bottom left)
+  const octo = document.createElement('div');
+  octo.className = 'creature octopus';
+  octo.textContent = '🐙';
+  octo.style.cssText = `bottom:110px; left:8%; font-size:3rem; animation-duration:5s; animation-delay:-1s;`;
+  wrap.appendChild(octo);
+
+  // Second octopus near bottom right
+  const octo2 = document.createElement('div');
+  octo2.className = 'creature octopus';
+  octo2.textContent = '🐙';
+  octo2.style.cssText = `bottom:100px; right:10%; font-size:2.2rem; animation-duration:6s; animation-delay:-3s;`;
+  wrap.appendChild(octo2);
+
+  // Jellyfish drifting down slowly
+  const jellies = [
+    { left:'15%', bottom:'60%', dur:12, delay:0   },
+    { left:'78%', bottom:'50%', dur:15, delay:-6  },
+    { left:'45%', bottom:'70%', dur:10, delay:-4  },
+  ];
+  jellies.forEach(j => {
+    const el = document.createElement('div');
+    el.className = 'creature octopus'; // reuse bobbing animation
+    el.textContent = '🪼';
+    el.style.cssText = `bottom:${j.bottom}; left:${j.left}; font-size:2rem; animation-duration:${j.dur}s; animation-delay:-${j.delay}s;`;
+    wrap.appendChild(el);
+  });
+
+  // Crab on the sand
+  const crab = document.createElement('div');
+  crab.textContent = '🦀';
+  crab.style.cssText = `position:fixed; bottom:85px; left:25%; font-size:1.8rem; z-index:6; animation:coralSway 3s ease-in-out infinite alternate; --sway-start:-8deg; --sway-end:8deg;`;
+  wrap.appendChild(crab);
+
+  // School of small fish
+  const school = document.createElement('div');
+  school.className = 'school';
+  school.style.cssText = `top:28%; left:0; animation-duration:16s; animation-delay:-6s;`;
+  for (let i = 0; i < 6; i++) {
+    const sf = document.createElement('div');
+    sf.className = 'school-fish';
+    sf.textContent = '🐟';
+    sf.style.cssText = `margin-top:${i % 2 === 0 ? '0' : '8px'}; opacity:${0.7 + Math.random()*0.3};`;
+    school.appendChild(sf);
+  }
+  wrap.appendChild(school);
+
+  // Second school
+  const school2 = document.createElement('div');
+  school2.className = 'school';
+  school2.style.cssText = `top:52%; left:0; animation-duration:20s; animation-delay:-14s;`;
+  for (let i = 0; i < 5; i++) {
+    const sf = document.createElement('div');
+    sf.className = 'school-fish';
+    sf.textContent = '🐠';
+    sf.style.cssText = `margin-top:${i % 2 === 0 ? '0' : '6px'}; font-size:0.95rem;`;
+    school2.appendChild(sf);
+  }
+  wrap.appendChild(school2);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.onload = () => {
+  document.getElementById('end-date-input').value = localStorage.getItem('holidays_end_date') || DEFAULT_END_DATE;
+  document.getElementById('end-time-input').value = localStorage.getItem('holidays_end_time') || DEFAULT_END_TIME;
+  document.getElementById('name-input').value     = localStorage.getItem('holidays_name') || '';
+  makeRays();
+  makeBubbles();
+  makeCreatures();
   tick();
 };
 </script>
