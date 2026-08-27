@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Grade 3 Spelling Bee</title>
+<link rel="icon" type="image/x-icon" href="/arcade/favicon.ico">
+<link rel="icon" type="image/png" sizes="96x96" href="/arcade/favicon-96x96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/arcade/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #1A1A00;
+    min-height: 100vh;
+    color: #1A1A00;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: #1A1A00;
+    padding: 0 1.5rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    border-bottom: 3px solid #F5C800;
+  }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .app-header img { height: 36px; width: 36px; object-fit: contain; }
+  .app-header-title { font-size: 20px; font-weight: 900; color: #F5C800; letter-spacing: -0.3px; }
+  .app-header-title span { color: white; }
+  .grade-badge {
+    display: inline-block; margin-left: 8px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.5px;
+    color: #1A1A00; background: #F5C800;
+    padding: 2px 9px; border-radius: 20px;
+    vertical-align: middle;
+  }
+  .header-student { font-size: 15px; font-weight: 700; color: rgba(245,200,0,0.6); display: none; }
+  .header-student.visible { display: block; }
+  .header-student strong { color: #F5C800; }
+
+  /* ── SCREENS ── */
+  .screen { display: none; flex: 1; flex-direction: column; background: #FFFBEA; }
+  .screen.active { display: flex; }
+
+  /* ══════════════════════════════
+     SETUP SCREEN
+  ══════════════════════════════ */
+  #screen-setup {
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    gap: 1.25rem;
+    background: #FFFBEA;
+  }
+
+  .setup-logo { font-size: 60px; margin-bottom: -8px; }
+  .setup-grade-eyebrow {
+    font-size: 13px; font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #C89000; margin-bottom: -6px;
+  }
+  .setup-title {
+    font-size: 38px; font-weight: 900; color: #1A1A00;
+    letter-spacing: -0.5px; text-align: center;
+  }
+  .setup-title span { color: #C89000; }
+
+  .setup-card {
+    width: 100%; max-width: 520px;
+    background: white; border-radius: 18px;
+    padding: 1.4rem 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    border: 2px solid #F5E080;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .setup-label { font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #C89000; }
+  .setup-hint { font-size: 13px; color: #888; font-weight: 500; margin-top: -4px; }
+
+  .name-input {
+    width: 100%; padding: 12px 14px;
+    font-size: 20px; font-family: 'Inter', sans-serif; font-weight: 700;
+    border: 2px solid #E5E0C8; border-radius: 12px;
+    background: #FFFBEA; color: #1A1A00;
+    outline: none; transition: border-color 0.2s;
+  }
+  .name-input:focus { border-color: #F5C800; background: white; }
+
+  .name-card.optional { opacity: 0.7; }
+  .name-card.optional:focus-within { opacity: 1; }
+
+  .words-textarea {
+    width: 100%; min-height: 120px;
+    padding: 12px 14px;
+    font-size: 17px; font-family: 'Inter', sans-serif; font-weight: 600;
+    border: 2px solid #E5E0C8; border-radius: 12px;
+    background: #FFFBEA; color: #1A1A00;
+    outline: none; resize: vertical; line-height: 1.7;
+    transition: border-color 0.2s;
+  }
+  .words-textarea:focus { border-color: #F5C800; background: white; }
+
+  .word-count { font-size: 13px; font-weight: 700; color: #C89000; text-align: right; }
+
+  .module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .module-chip {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 14px; border-radius: 12px;
+    border: 2px solid #E5E0C8; background: #FFFBEA;
+    font-size: 15px; font-weight: 700; color: #1A1A00;
+    cursor: pointer; transition: border-color 0.15s, background 0.15s;
+  }
+  .module-chip input { width: 18px; height: 18px; accent-color: #F5C800; cursor: pointer; flex-shrink: 0; }
+  .module-chip.checked { border-color: #F5C800; background: #FFF8D6; }
+  .module-count { font-size: 12px; font-weight: 600; color: #999; }
+
+  .btn-begin {
+    width: 100%; max-width: 520px;
+    padding: 18px; font-size: 22px; font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    background: #F5C800; color: #1A1A00;
+    border: none; border-radius: 16px; cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    box-shadow: 0 4px 14px rgba(245,200,0,0.4);
+    letter-spacing: 0.3px;
+  }
+  .btn-begin:hover { background: #E0B800; }
+  .btn-begin:active { transform: scale(0.97); }
+  .btn-begin:disabled { background: #D4CC90; box-shadow: none; cursor: not-allowed; color: #888; }
+
+  /* ══════════════════════════════
+     HANDOFF SCREEN
+  ══════════════════════════════ */
+  #screen-handoff {
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    gap: 1.25rem;
+    background: #FFFBEA;
+  }
+
+  .handoff-banner {
+    width: 100%; max-width: 500px;
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    border: 3px solid #F5C800;
+    background: #1A1A00;
+  }
+  .handoff-eyebrow { font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: rgba(245,200,0,0.7); }
+  .handoff-name { font-size: 36px; font-weight: 900; color: #F5C800; line-height: 1.1; }
+  .handoff-role { font-size: 16px; font-weight: 700; color: white; margin-top: 2px; }
+
+  .handoff-roles-grid { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 8px; }
+  .role-chip {
+    padding: 12px 16px; border-radius: 12px;
+    font-size: 15px; font-weight: 700;
+    display: flex; align-items: center; gap: 10px;
+    border: 2px solid #E5E0C8;
+    background: white;
+    color: #1A1A00;
+  }
+  .role-chip.screen  { background: #1A1A00; color: #F5C800; border-color: #F5C800; }
+  .role-chip.spell { background: #FFF8D6; color: #7A5C00; border-color: #F5C800; }
+  .role-chip.listen{ background: #F5F5F5; color: #666; border-color: #DDD; }
+  .role-chip-name { font-weight: 900; }
+
+  .handoff-note { font-size: 14px; color: #666; font-weight: 500; text-align: center; line-height: 1.6; max-width: 440px; }
+
+  .btn-ready {
+    width: 100%; max-width: 500px;
+    padding: 17px; font-size: 20px; font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    background: #F5C800; color: #1A1A00;
+    border: none; border-radius: 16px; cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    box-shadow: 0 4px 14px rgba(245,200,0,0.4);
+  }
+  .btn-ready:hover { background: #E0B800; }
+  .btn-ready:active { transform: scale(0.97); }
+
+  /* ══════════════════════════════
+     GAME SCREEN
+  ══════════════════════════════ */
+  #screen-game {
+    flex-direction: column;
+    padding: 1rem 1.5rem 1.5rem;
+    gap: 1rem;
+    align-items: center;
+    background: #FFFBEA;
+  }
+
+  /* Score bar */
+  .scores-bar { display: flex; gap: 8px; align-items: center; }
+  .score-card {
+    background: #1A1A00; border-radius: 12px;
+    padding: 10px 20px; text-align: center;
+    min-width: 90px;
+    border: 2px solid #F5C800;
+  }
+  .score-name { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #F5C800; }
+  .score-val { font-size: 30px; font-weight: 900; color: white; line-height: 1.1; }
+  .score-sub { font-size: 10px; color: rgba(245,200,0,0.6); font-weight: 700; letter-spacing: 0.5px; }
+
+  .scores-divider { width: 1px; height: 40px; background: #D4CC90; }
+  .q-counter { font-size: 15px; font-weight: 800; color: #999; }
+
+  /* Word card */
+  .word-card {
+    width: 100%; max-width: 960px;
+    background: #1A1A00;
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    border: 3px solid #F5C800;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .word-label { font-size: 13px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(245,200,0,0.6); }
+  .word-text { font-size: 52px; font-weight: 900; color: #F5C800; letter-spacing: -1px; line-height: 1.1; }
+  .word-sentence {
+    font-size: 17px; font-weight: 600; font-style: italic;
+    color: rgba(255,255,255,0.75);
+    max-width: 640px; margin: 2px auto 0; line-height: 1.5;
+  }
+  .speller-chip {
+    display: inline-block;
+    padding: 8px 20px; border-radius: 30px;
+    font-size: 16px; font-weight: 700;
+    background: rgba(245,200,0,0.15);
+    color: #F5C800;
+    margin-top: 6px;
+  }
+
+  /* Grade buttons */
+  .grade-row {
+    width: 100%; max-width: 960px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .grade-btn {
+    padding: 22px; font-size: 22px; font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    border: none; border-radius: 16px; cursor: pointer;
+    transition: transform 0.1s, filter 0.1s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .grade-btn:active { transform: scale(0.97); filter: brightness(0.93); }
+  .btn-correct   { background: #F5C800; color: #1A1A00; }
+  .btn-incorrect { background: #1A1A00; color: #F5C800; border: 3px solid #F5C800; }
+
+  .grader-label { font-size: 13px; font-weight: 800; color: #999; text-align: center; text-transform: uppercase; letter-spacing: 0.8px; }
+
+  .btn-next {
+    width: 100%; max-width: 960px;
+    padding: 16px; font-size: 18px; font-weight: 800;
+    font-family: 'Inter', sans-serif;
+    background: white; color: #1A1A00;
+    border: 2px solid #D4CC90; border-radius: 14px; cursor: pointer;
+    transition: background 0.15s; display: none;
+  }
+  .btn-next:hover { background: #FFFBEA; }
+
+  .btn-end-game {
+    width: 100%; max-width: 960px;
+    padding: 16px; font-size: 17px; font-weight: 800;
+    font-family: 'Inter', sans-serif;
+    background: none; color: #999;
+    border: 2px solid #E5DFC0; border-radius: 14px; cursor: pointer;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+    margin-top: auto;
+  }
+  .btn-end-game:hover { color: #E24B4A; border-color: #E24B4A; background: #FFF5F4; }
+
+  /* ══════════════════════════════
+     END SCREEN
+  ══════════════════════════════ */
+  #screen-end {
+    align-items: center;
+    padding: 1.5rem 1.5rem 3rem;
+    gap: 1.25rem;
+    overflow-y: auto;
+    background: #FFFBEA;
+  }
+
+  .winner-banner {
+    width: 100%; max-width: 680px;
+    background: #1A1A00; border-radius: 20px;
+    padding: 1.75rem 1.5rem; text-align: center;
+    border: 3px solid #F5C800;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+  .winner-trophy { font-size: 48px; }
+  .winner-eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: rgba(245,200,0,0.6); }
+  .winner-name { font-size: 34px; font-weight: 900; color: #F5C800; letter-spacing: -0.5px; }
+  .winner-sub { font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.5); }
+
+  .final-scores { width: 100%; max-width: 680px; display: flex; gap: 10px; }
+  .final-score-card {
+    flex: 1; background: white; border-radius: 14px;
+    padding: 1rem; text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border: 2px solid #E5E0C8;
+  }
+  .final-score-card.winner-card { border-color: #F5C800; box-shadow: 0 4px 16px rgba(245,200,0,0.25); }
+  .final-player-name { font-size: 15px; font-weight: 800; color: #1A1A00; }
+  .final-score-val { font-size: 42px; font-weight: 900; color: #1A1A00; line-height: 1; }
+  .final-score-label { font-size: 11px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .final-qs { font-size: 13px; color: #AAA; font-weight: 600; }
+
+  /* Missed words */
+  .missed-section {
+    width: 100%; max-width: 680px;
+    background: white; border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border: 2px solid #E5E0C8;
+  }
+  .missed-header {
+    background: #1A1A00;
+    padding: 0.85rem 1.25rem;
+    font-size: 14px; font-weight: 800;
+    color: #F5C800; text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .missed-player-section { border-bottom: 1px solid #F0EDD0; }
+  .missed-player-section:last-child { border-bottom: none; }
+  .missed-player-name {
+    padding: 0.7rem 1.25rem 0.3rem;
+    font-size: 13px; font-weight: 800;
+    color: #C89000; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .missed-words-list {
+    padding: 0 1.25rem 0.8rem;
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .missed-word {
+    background: #FFF8D6; color: #7A5C00;
+    padding: 5px 14px; border-radius: 20px;
+    font-size: 15px; font-weight: 700;
+    border: 1px solid #F5E080;
+  }
+  .missed-none {
+    padding: 0 1.25rem 0.8rem;
+    font-size: 14px; font-weight: 600; color: #3DBE8F;
+  }
+
+  .btn-play-again {
+    width: 100%; max-width: 680px;
+    padding: 18px; font-size: 20px; font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    background: #F5C800; color: #1A1A00;
+    border: none; border-radius: 16px; cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    box-shadow: 0 4px 14px rgba(245,200,0,0.4);
+  }
+  .btn-play-again:hover { background: #E0B800; }
+  .btn-play-again:active { transform: scale(0.97); }
+
+  /* Quiz top row */
+  .quiz-top {
+    width: 100%; max-width: 960px;
+    display: flex; align-items: center; justify-content: center; gap: 1rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="header-left">
+    <img src="/arcade/logo.png" alt="Code Cat">
+    <div class="app-header-title">Spelling <span>Bee</span><span class="grade-badge">G3</span></div>
+  </div>
+  <div class="header-student" id="header-student">
+    <strong id="header-name"></strong>
+  </div>
+</div>
+
+<!-- ══ SETUP ══ -->
+<div class="screen active" id="screen-setup">
+  <div class="setup-logo">🐝</div>
+  <div class="setup-grade-eyebrow">Grade 3</div>
+  <div class="setup-title">Spelling <span>Bee</span></div>
+
+  <div class="setup-card">
+    <div class="setup-label">Modules</div>
+    <div class="setup-hint">Pick one or more word lists to include</div>
+    <div class="module-grid" id="module-grid"></div>
+  </div>
+
+  <div class="setup-card">
+    <div class="setup-label">Player 1</div>
+    <input class="name-input" id="name1" type="text" placeholder="First name..." maxlength="16" autocomplete="off" />
+  </div>
+  <div class="setup-card name-card optional">
+    <div class="setup-label">Player 2 <span style="font-size:11px;color:#aaa;font-weight:600;margin-left:6px;">optional</span></div>
+    <input class="name-input" id="name2" type="text" placeholder="First name (optional)..." maxlength="16" autocomplete="off" />
+    <div class="setup-hint">Leave blank to play solo</div>
+  </div>
+  <div class="setup-card name-card optional">
+    <div class="setup-label">Player 3 <span style="font-size:11px;color:#aaa;font-weight:600;margin-left:6px;">optional</span></div>
+    <input class="name-input" id="name3" type="text" placeholder="First name (optional)..." maxlength="16" autocomplete="off" />
+  </div>
+
+
+
+  <button class="btn-begin" id="btn-begin" disabled onclick="beginGame()">Start Spelling!</button>
+</div>
+
+<!-- ══ HANDOFF ══ -->
+<div class="screen" id="screen-handoff">
+  <div class="handoff-banner" id="handoff-banner">
+    <div class="handoff-eyebrow">Screen goes to</div>
+    <div class="handoff-name" id="handoff-name">Player</div>
+    <div class="handoff-role">You read the word aloud</div>
+  </div>
+  <div class="handoff-roles-grid" id="handoff-roles-grid"></div>
+  <div class="handoff-note" id="handoff-note"></div>
+  <button class="btn-ready" id="btn-ready">Ready!</button>
+</div>
+
+<!-- ══ GAME ══ -->
+<div class="screen" id="screen-game">
+  <div class="quiz-top">
+    <div class="scores-bar" id="scores-bar"></div>
+    <div class="scores-divider"></div>
+    <div class="q-counter" id="q-counter">Word 1</div>
+  </div>
+
+  <div class="word-card">
+    <div class="word-label">Read this word aloud</div>
+    <div class="word-text" id="word-text">—</div>
+    <div class="word-sentence" id="word-sentence"></div>
+    <div class="speller-chip" id="speller-chip">Spells out loud</div>
+  </div>
+
+  <div class="grader-label" id="grader-label">Did they spell it correctly?</div>
+
+  <div class="grade-row" id="grade-row">
+    <button class="grade-btn btn-correct"   onclick="grade(true)">Correct</button>
+    <button class="grade-btn btn-incorrect" onclick="grade(false)">Incorrect</button>
+  </div>
+
+  <button class="btn-next" id="btn-next" onclick="nextTurn()">Next Word →</button>
+  <button class="btn-end-game" onclick="endGame()">End Game</button>
+</div>
+
+<!-- ══ END ══ -->
+<div class="screen" id="screen-end">
+  <div class="winner-banner">
+    <div class="winner-trophy" id="winner-trophy">🏆</div>
+    <div class="winner-eyebrow" id="winner-eyebrow">Winner</div>
+    <div class="winner-name" id="winner-name">—</div>
+    <div class="winner-sub" id="winner-sub"></div>
+  </div>
+
+  <div class="final-scores" id="final-scores"></div>
+  <div class="final-qs" id="final-qs"></div>
+
+  <div class="missed-section">
+    <div class="missed-header">Missed Words</div>
+    <div id="missed-words-breakdown"></div>
+  </div>
+
+  <button class="btn-play-again" onclick="newPlayers()">Play Again</button>
+</div>
+
+<script>
+// ── WORD LIST ──
+const MODULES = [
+  { name: 'Module 1', words: [
+    { word: 'clock',    sentence: "The clock on the wall shows it is three o'clock." },
+    { word: 'crop',     sentence: "Farmers grow a new crop of corn every year." },
+    { word: 'gift',     sentence: "She wrapped a gift for her friend's birthday." },
+    { word: 'plan',     sentence: "We made a plan for the school trip." },
+    { word: 'problem',  sentence: "He solved the math problem correctly." },
+    { word: 'pumpkin',  sentence: "We carved a pumpkin for Halloween." },
+    { word: 'shut',     sentence: "Please shut the door when you leave." },
+    { word: 'skip',     sentence: "The kids like to skip rope at recess." },
+    { word: 'smell',    sentence: "I can smell cookies baking in the oven." },
+    { word: 'sprint',   sentence: "She did a quick sprint to the finish line." },
+    { word: 'cube',     sentence: "An ice cube melted in my drink." },
+    { word: 'decide',   sentence: "It's hard to decide what to eat for lunch." },
+    { word: 'excuse',   sentence: "He gave an excuse for being late." },
+    { word: 'flame',    sentence: "The candle flame flickered in the wind." },
+    { word: 'invite',   sentence: "We will invite our neighbors to the party." },
+    { word: 'life',     sentence: "She wrote a story about her life." },
+    { word: 'price',    sentence: "The price of the toy was too high." },
+    { word: 'save',     sentence: "I save my allowance every week." },
+    { word: 'spoke',    sentence: "He spoke loudly so everyone could hear." },
+    { word: 'strange',  sentence: "The noise outside was very strange." },
+    { word: 'afraid',   sentence: "The little boy was afraid of the dark." },
+    { word: 'bait',     sentence: "He used worms as bait for fishing." },
+    { word: 'dream',    sentence: "I had a strange dream last night." },
+    { word: 'flavor',   sentence: "My favorite flavor of ice cream is chocolate." },
+    { word: 'lead',     sentence: "She will lead the class line to the gym." },
+    { word: 'pavement', sentence: "The chalk marks were drawn on the pavement." },
+    { word: 'real',     sentence: "That is a real diamond, not fake." },
+    { word: 'tea',      sentence: "Grandma drinks a cup of tea every morning." },
+    { word: 'today',    sentence: "Today is a beautiful sunny day." },
+    { word: 'trail',    sentence: "We hiked along the forest trail." }
+  ]},
+  { name: 'Module 2', words: [
+    { word: 'almost',   sentence: "It is almost time for lunch." },
+    { word: 'alone',    sentence: "She likes to read alone in her room." },
+    { word: 'approach', sentence: "The teacher watched them approach the classroom." },
+    { word: 'boast',    sentence: "He likes to boast about his high score." },
+    { word: 'glow',     sentence: "The stars glow brightly at night." },
+    { word: 'load',     sentence: "Dad will load the boxes into the car." },
+    { word: 'shadow',   sentence: "My shadow grew longer in the evening sun." },
+    { word: 'soak',     sentence: "Let the beans soak in water overnight." },
+    { word: 'window',   sentence: "She looked out the window at the rain." },
+    { word: 'yellow',   sentence: "The sun is bright yellow in the sky." },
+    { word: 'blind',    sentence: "He pulled down the blind to block the sun." },
+    { word: 'combine',  sentence: "We will combine our ideas for the project." },
+    { word: 'lie',      sentence: "It is wrong to tell a lie." },
+    { word: 'might',    sentence: "It might rain later today." },
+    { word: 'mild',     sentence: "The weather was mild and pleasant." },
+    { word: 'pie',      sentence: "Grandma baked an apple pie for dessert." },
+    { word: 'sight',    sentence: "The mountain view was a beautiful sight." },
+    { word: 'silent',   sentence: "The library was completely silent." },
+    { word: 'slight',   sentence: "There was only a slight breeze outside." },
+    { word: 'tie',      sentence: "He wore a blue tie to the wedding." },
+    { word: 'blossom',  sentence: "The cherry tree began to blossom in spring." },
+    { word: 'cheese',   sentence: "I like cheese on my sandwich." },
+    { word: 'eighteen', sentence: "She will turn eighteen next year." },
+    { word: 'moment',   sentence: "Wait just a moment, please." },
+    { word: 'piles',    sentence: "There were piles of leaves in the yard." },
+    { word: 'shiny',    sentence: "The new car had a shiny red coat of paint." },
+    { word: 'socks',    sentence: "He put on clean socks before school." },
+    { word: 'sticky',   sentence: "The candy left sticky fingers on the table." },
+    { word: 'stuff',    sentence: "Please put your stuff away neatly." },
+    { word: 'toast',    sentence: "I had toast with jam for breakfast." }
+  ]},
+  { name: 'Module 3', words: [
+    { word: 'scrawl',   sentence: "His handwriting looked like a messy scrawl." },
+    { word: 'scratch',  sentence: "The cat left a scratch on the couch." },
+    { word: 'screen',   sentence: "She watched the movie on the big screen." },
+    { word: 'splat',    sentence: "The water balloon hit the ground with a splat." },
+    { word: 'splash',   sentence: "The kids made a big splash in the pool." },
+    { word: 'splurge',  sentence: "We decided to splurge on ice cream sundaes." },
+    { word: 'sprain',   sentence: "He got a sprain in his ankle while running." },
+    { word: 'squeeze',  sentence: "Give the lemon a squeeze for the juice." },
+    { word: 'strange',  sentence: "The old house looked strange and empty." },
+    { word: 'strap',    sentence: "She fixed the strap on her backpack." },
+    { word: 'circus',   sentence: "We watched the clowns at the circus." },
+    { word: 'enrage',   sentence: "Loud noises seemed to enrage the sleeping baby." },
+    { word: 'huge',     sentence: "The elephant was absolutely huge." },
+    { word: 'nudge',    sentence: "She gave her brother a gentle nudge to wake him." },
+    { word: 'quick',    sentence: "The rabbit ran with a quick hop." },
+    { word: 'quiver',   sentence: "The arrow began to quiver after it hit the target." },
+    { word: 'ridge',    sentence: "We hiked along the mountain ridge." },
+    { word: 'smudge',   sentence: "There was a smudge of paint on his shirt." },
+    { word: 'stage',    sentence: "The actors stood on the stage." },
+    { word: 'wedge',    sentence: "He used a wedge to prop open the door." },
+    { word: 'knee',     sentence: "She scraped her knee when she fell." },
+    { word: 'knitting', sentence: "Grandma is knitting a warm scarf." },
+    { word: 'knock',    sentence: "Please knock before you enter the room." },
+    { word: 'knot',     sentence: "He tied a knot in his shoelace." },
+    { word: 'wreath',   sentence: "We hung a wreath on the front door." },
+    { word: 'wrench',   sentence: "Dad used a wrench to fix the pipe." },
+    { word: 'wreck',    sentence: "The old car looked like a wreck." },
+    { word: 'wring',    sentence: "She had to wring out the wet towel." },
+    { word: 'wrist',    sentence: "He wore a watch on his wrist." },
+    { word: 'wrap',     sentence: "Can you help me wrap this present?" }
+  ]},
+  { name: 'Module 4', words: [
+    { word: 'branch',   sentence: "The bird landed on a tree branch." },
+    { word: 'cinch',    sentence: "Tying my shoes is a cinch." },
+    { word: 'fetch',    sentence: "The dog loves to fetch the ball." },
+    { word: 'launch',   sentence: "We watched the rocket launch into space." },
+    { word: 'ouch',     sentence: "Ouch! I stubbed my toe on the chair." },
+    { word: 'peach',    sentence: "She picked a ripe peach from the tree." },
+    { word: 'screech',  sentence: "The car tires made a loud screech." },
+    { word: 'slouch',   sentence: "Don't slouch in your chair, sit up straight." },
+    { word: 'snatch',   sentence: "The seagull tried to snatch my sandwich." },
+    { word: 'stretch',  sentence: "We did a stretch before running the race." },
+    { word: 'announce', sentence: "The teacher will announce the winners today." },
+    { word: 'blouse',   sentence: "She wore a pretty blue blouse to school." },
+    { word: 'clown',    sentence: "The clown made everyone laugh at the circus." },
+    { word: 'coward',   sentence: "He was not a coward when danger came." },
+    { word: 'crowd',    sentence: "A huge crowd cheered at the game." },
+    { word: 'frown',    sentence: "She had a frown on her face after losing." },
+    { word: 'powder',   sentence: "The baby powder smelled fresh and clean." },
+    { word: 'power',    sentence: "The storm knocked out the power in our house." },
+    { word: 'round',    sentence: "The ball is perfectly round." },
+    { word: 'thousand', sentence: "There were a thousand stars in the sky." },
+    { word: 'awful',    sentence: "The weather was awful during the storm." },
+    { word: 'chalk',    sentence: "The teacher wrote with chalk on the board." },
+    { word: 'cloth',    sentence: "She wiped the table with a soft cloth." },
+    { word: 'cost',     sentence: "The cost of the ticket was five dollars." },
+    { word: 'haunt',    sentence: "The scary story will haunt my dreams tonight." },
+    { word: 'law',      sentence: "It is against the law to litter." },
+    { word: 'lawn',     sentence: "Dad mows the lawn every Saturday." },
+    { word: 'raw',      sentence: "Carrots can be eaten raw or cooked." },
+    { word: 'salt',     sentence: "She added a pinch of salt to the soup." },
+    { word: 'sauce',    sentence: "I love pasta with tomato sauce." }
+  ]}
+];
+let players    = [];
+let scores     = [];
+let streaks    = [];   // consecutive correct count per player
+let missed     = [];   // array of sets, one per player
+let turnIndex  = 0;
+let wordCount  = 0;
+let words      = [];
+let usedByPlayer = [];
+let currentWord = '';
+let graded = false;
+
+// ── SETUP ──
+function buildModuleGrid() {
+  const grid = document.getElementById('module-grid');
+  grid.innerHTML = '';
+  MODULES.forEach((mod, i) => {
+    const label = document.createElement('label');
+    label.className = 'module-chip';
+    label.innerHTML = `
+      <input type="checkbox" id="module-${i}" data-index="${i}">
+      <span>${mod.name}<br><span class="module-count">${mod.words.length} words</span></span>
+    `;
+    const input = label.querySelector('input');
+    input.addEventListener('change', () => {
+      label.classList.toggle('checked', input.checked);
+      checkReady();
+    });
+    grid.appendChild(label);
+  });
+}
+buildModuleGrid();
+
+function getSelectedModules() {
+  return MODULES.filter((_, i) => document.getElementById(`module-${i}`).checked);
+}
+
+['name1','name2','name3'].forEach(id => {
+  document.getElementById(id).addEventListener('input', checkReady);
+});
+
+function checkReady() {
+  const n1 = document.getElementById('name1').value.trim();
+  const hasModule = getSelectedModules().length > 0;
+  document.getElementById('btn-begin').disabled = !(n1 && hasModule);
+}
+
+function beginGame() {
+  const n1 = document.getElementById('name1').value.trim();
+  const n2 = document.getElementById('name2').value.trim();
+  const n3 = document.getElementById('name3').value.trim();
+  players = n2 ? (n3 ? [n1, n2, n3] : [n1, n2]) : [n1];
+  scores  = players.map(() => 0);
+  streaks = players.map(() => 0);
+  missed  = players.map(() => []);
+  usedByPlayer = players.map(() => []);
+  words   = getSelectedModules().flatMap(m => m.words);
+  turnIndex = 0; wordCount = 0; graded = false;
+
+  document.getElementById('header-name').textContent = players[0];
+  document.getElementById('header-student').classList.add('visible');
+
+  buildScoresBar();
+
+  if (players.length === 1) {
+    loadWord();
+    showScreen('screen-game');
+  } else {
+    showHandoff();
+  }
+}
+
+// ── SCORES ──
+function buildScoresBar() {
+  const bar = document.getElementById('scores-bar');
+  bar.innerHTML = '';
+  players.forEach((name, i) => {
+    const card = document.createElement('div');
+    card.className = 'score-card';
+    card.innerHTML = `
+      <div class="score-name">${name}</div>
+      <div class="score-val" id="score-val-${i}">0</div>
+      <div class="score-sub" id="score-sub-${i}">PTS</div>
+    `;
+    bar.appendChild(card);
+  });
+}
+
+function updateScores() {
+  players.forEach((_, i) => {
+    document.getElementById(`score-val-${i}`).textContent = scores[i];
+    const sub = document.getElementById(`score-sub-${i}`);
+    if (streaks[i] >= 3) {
+      sub.textContent = '🔥 STREAK';
+      sub.style.color = '#F5C800';
+    } else {
+      sub.textContent = 'PTS';
+      sub.style.color = '';
+    }
+  });
+}
+
+// ── WORD PICKING ──
+function getWord(playerIndex) {
+  if (usedByPlayer[playerIndex].length === words.length) {
+    usedByPlayer[playerIndex] = [];
+  }
+  let idx;
+  do { idx = Math.floor(Math.random() * words.length); }
+  while (usedByPlayer[playerIndex].includes(idx));
+  usedByPlayer[playerIndex].push(idx);
+  return words[idx];
+}
+
+// ── ROLES ──
+function getRoles() {
+  const n = players.length;
+  const speller  = turnIndex;
+  const reader   = (turnIndex + 1) % n;
+  const listener = n === 3 ? (turnIndex + 2) % n : -1;
+  return { speller, reader, listener };
+}
+
+// ── HANDOFF ──
+function showHandoff() {
+  const { speller, reader, listener } = getRoles();
+
+  document.getElementById('handoff-name').textContent = players[reader];
+  document.getElementById('header-name').textContent  = players[reader];
+
+  const rolesGrid = document.getElementById('handoff-roles-grid');
+  if (players.length === 3) {
+    rolesGrid.innerHTML = `
+      <div class="role-chip screen"><span>📱</span><span><span class="role-chip-name">${players[reader]}</span> — reads the word aloud</span></div>
+      <div class="role-chip spell"><span>🐝</span><span><span class="role-chip-name">${players[speller]}</span> — spells it out loud</span></div>
+      <div class="role-chip listen"><span>👂</span><span><span class="role-chip-name">${players[listener]}</span> — listen carefully, you're next!</span></div>
+    `;
+  } else {
+    rolesGrid.innerHTML = `
+      <div class="role-chip screen"><span>📱</span><span><span class="role-chip-name">${players[reader]}</span> — reads the word and grades</span></div>
+      <div class="role-chip spell"><span>🐝</span><span><span class="role-chip-name">${players[speller]}</span> — spells it out loud</span></div>
+    `;
+  }
+
+  document.getElementById('handoff-note').textContent =
+    `Pass the screen to ${players[reader]}. They read the word — ${players[speller]} spells it from memory.`;
+
+  showScreen('screen-handoff');
+}
+
+document.getElementById('btn-ready').addEventListener('click', () => {
+  loadWord();
+  showScreen('screen-game');
+});
+
+// ── GAME ──
+function loadWord() {
+  currentWord = getWord(turnIndex);
+  wordCount++;
+  graded = false;
+
+  const { speller, reader } = getRoles();
+
+  document.getElementById('word-text').textContent     = currentWord.word;
+  document.getElementById('word-sentence').textContent = currentWord.sentence;
+  document.getElementById('q-counter').textContent   = 'Word ' + wordCount;
+  document.getElementById('speller-chip').textContent = players[speller] + ' — say - spell - say';
+
+  const graderLabel = players.length === 3
+    ? `${players[reader]} — did they spell it correctly?`
+    : 'Did they spell it correctly?';
+  document.getElementById('grader-label').textContent = graderLabel;
+
+  document.getElementById('grade-row').style.display = 'grid';
+  document.getElementById('btn-next').style.display  = 'none';
+}
+
+function grade(correct) {
+  if (graded) return;
+  graded = true;
+
+  let earnedBonus = false;
+  if (correct) {
+    streaks[turnIndex]++;
+    const points = streaks[turnIndex] >= 3 ? 2 : 1;
+    earnedBonus = points === 2;
+    scores[turnIndex] += points;
+  } else {
+    streaks[turnIndex] = 0;
+    missed[turnIndex].push(currentWord.word);
+  }
+
+  updateScores();
+  document.getElementById('grade-row').style.display = 'none';
+  document.getElementById('btn-next').style.display  = 'block';
+  document.getElementById('grader-label').textContent = correct
+    ? (earnedBonus ? '🔥 Correct! +2 streak bonus' : 'Correct!')
+    : 'Incorrect — ' + currentWord.word;
+}
+
+function nextTurn() {
+  turnIndex = (turnIndex + 1) % players.length;
+  if (players.length === 1) {
+    loadWord();
+    showScreen('screen-game');
+  } else {
+    showHandoff();
+  }
+}
+
+// ── END GAME ──
+function endGame() {
+  const maxScore = Math.max(...scores);
+  const winners  = players.filter((_, i) => scores[i] === maxScore);
+  const isTie    = winners.length > 1;
+  const isSolo   = players.length === 1;
+
+  if (isSolo) {
+    document.getElementById('winner-trophy').textContent  = '⭐';
+    document.getElementById('winner-eyebrow').textContent = 'Results';
+    document.getElementById('winner-name').textContent    = players[0];
+    document.getElementById('winner-sub').textContent     = `${scores[0]} of ${wordCount} correct`;
+  } else {
+    document.getElementById('winner-trophy').textContent  = isTie ? '🤝' : '🏆';
+    document.getElementById('winner-eyebrow').textContent = isTie ? "It's a Tie!" : 'Winner';
+    document.getElementById('winner-name').textContent    = isTie ? winners.join(' & ') : winners[0];
+    document.getElementById('winner-sub').textContent     = isTie
+      ? `${maxScore} points each`
+      : `${maxScore} pts — well spelled!`;
+  }
+
+  const finalScores = document.getElementById('final-scores');
+  finalScores.innerHTML = '';
+  players.forEach((name, i) => {
+    const isWinner = scores[i] === maxScore && !isTie;
+    const card = document.createElement('div');
+    card.className = `final-score-card${isWinner ? ' winner-card' : ''}`;
+    card.innerHTML = `
+      <div class="final-player-name">${name}</div>
+      <div class="final-score-val">${scores[i]}</div>
+      <div class="final-score-label">correct</div>
+    `;
+    finalScores.appendChild(card);
+  });
+
+  document.getElementById('final-qs').textContent =
+    `${wordCount} word${wordCount !== 1 ? 's' : ''} attempted`;
+
+  // Missed words breakdown
+  const breakdown = document.getElementById('missed-words-breakdown');
+  breakdown.innerHTML = '';
+  players.forEach((name, i) => {
+    const section = document.createElement('div');
+    section.className = 'missed-player-section';
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'missed-player-name';
+    nameDiv.textContent = name;
+    section.appendChild(nameDiv);
+
+    if (missed[i].length === 0) {
+      const none = document.createElement('div');
+      none.className = 'missed-none';
+      none.textContent = 'No missed words!';
+      section.appendChild(none);
+    } else {
+      const list = document.createElement('div');
+      list.className = 'missed-words-list';
+      missed[i].forEach(w => {
+        const chip = document.createElement('span');
+        chip.className = 'missed-word';
+        chip.textContent = w;
+        list.appendChild(chip);
+      });
+      section.appendChild(list);
+    }
+    breakdown.appendChild(section);
+  });
+
+  showScreen('screen-end');
+}
+
+function newPlayers() {
+  ['name1','name2','name3'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('header-student').classList.remove('visible');
+  document.querySelectorAll('.module-chip input').forEach(cb => {
+    cb.checked = false;
+    cb.closest('.module-chip').classList.remove('checked');
+  });
+  checkReady();
+  showScreen('screen-setup');
+}
+
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
