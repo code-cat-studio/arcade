@@ -15,8 +15,8 @@
     min-height: 100vh;
     font-family: 'DM Sans', sans-serif;
     display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 24px;
+    align-items: center; justify-content: flex-start;
+    padding: 72px 24px 24px;
     transition: background 0.4s;
   }
 
@@ -62,39 +62,46 @@
   .error-msg { background:var(--red-dim); border:1px solid var(--red); border-radius:10px; padding:10px 14px; color:var(--red); font-size:13px; margin-top:12px; display:none; }
 
   /* ── CLOCK SCREEN ── */
-  #clock-screen { display:none; width:100%; max-width:680px; text-align:center; }
+  #clock-screen { display:none; width:100%; max-width:1180px; text-align:center; }
 
-  .exam-title { font-family:'DM Serif Display',serif; font-size:clamp(1.6rem,3.5vw,2.2rem); color:var(--accent); margin-bottom:22px; }
+  .clock-screen-grid { display:flex; align-items:stretch; gap:28px; text-align:left; }
 
-  .time-cards { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:28px; }
-  .time-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:18px 10px; position:relative; overflow:hidden; }
+  .col-left  { flex:0 0 220px; display:flex; flex-direction:column; }
+  .left-spacer { flex:1 1 auto; }
+  .col-center{ flex:1 1 auto; display:flex; flex-direction:column; align-items:center; min-width:0; }
+  .col-right { flex:0 0 320px; display:flex; flex-direction:column; }
+
+  .exam-title { font-family:'DM Serif Display',serif; font-size:clamp(1.6rem,3.5vw,2.2rem); color:var(--accent); margin-top:0; margin-bottom:56px; text-align:center; }
+
+  .time-cards { display:flex; flex-direction:column; gap:12px; }
+  .time-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:16px 14px; position:relative; overflow:hidden; }
   .time-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:16px 16px 0 0; }
   .time-card.start::before { background:var(--green); }
   .time-card.end::before   { background:var(--red); }
   .time-card.now::before   { background:var(--accent); }
   .card-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:7px; }
-  .card-time  { font-family:'DM Mono',monospace; font-size:clamp(1.2rem,2.5vw,1.8rem); font-weight:500; line-height:1; }
+  .card-time  { font-family:'DM Mono',monospace; font-size:clamp(1.15rem,1.8vw,1.5rem); font-weight:500; line-height:1; }
   .time-card.start .card-time { color:var(--green); }
   .time-card.end .card-time   { color:var(--red); }
   .time-card.now .card-time   { color:var(--accent); }
   .card-sub { font-size:11px; color:var(--muted); margin-top:4px; }
 
-  .clock-wrap { display:flex; justify-content:center; margin-bottom:28px; }
-  canvas#analog-clock { border-radius:50%; box-shadow:0 8px 40px rgba(0,0,0,0.15); }
+  .clock-wrap { display:flex; justify-content:center; align-items:center; flex:1; }
+  canvas#analog-clock { border-radius:50%; box-shadow:0 8px 40px rgba(0,0,0,0.15); max-width:100%; height:auto; }
 
-  /* ── TRAFFIC LIGHT ── */
+  /* ── TRAFFIC LIGHT (horizontal, under clock) ── */
   .traffic-light-wrap {
     display:flex; flex-direction:column; align-items:center;
-    margin-bottom:20px;
+    margin-top:52px;
   }
   .traffic-light {
-    background:#222; border-radius:40px;
-    padding:10px 0; display:flex; flex-direction:column;
-    align-items:center; gap:8px; width:56px;
+    background:#222; border-radius:56px;
+    padding:0 16px; display:flex; flex-direction:row;
+    align-items:center; gap:14px; height:85px;
     box-shadow:0 4px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
   }
   .light {
-    width:32px; height:32px; border-radius:50%;
+    width:48px; height:48px; border-radius:50%;
     transition:box-shadow 0.4s, opacity 0.4s;
   }
   .light.red-light    { background:#c0392b; }
@@ -110,11 +117,23 @@
     color:var(--muted); letter-spacing:0.5px;
   }
 
-  /* ── BOTTOM ROW: theme switcher + reset (subtle) ── */
-  .bottom-row {
-    display:flex; align-items:center; justify-content:center;
-    gap:16px; margin-top:4px; flex-wrap:wrap;
+  /* ── NOTES BOX (col-right) ── */
+  .notes-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:7px; }
+  .notes-box {
+    flex:1; width:100%; min-height:200px; resize:none;
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    padding:16px 18px; color:var(--text); font-family:'DM Mono',monospace;
+    font-size:clamp(1.15rem,1.8vw,1.5rem); font-weight:500; line-height:1.6;
+    transition:border-color 0.2s;
   }
+  .notes-box:focus { outline:none; border-color:var(--accent); }
+
+  /* ── LEFT-BOTTOM: theme switcher + reset (anchored to bottom of left column) ── */
+  .left-controls {
+    display:flex; flex-direction:column; align-items:flex-start;
+    gap:14px;
+  }
+  .bottom-row { display:flex; align-items:center; gap:10px; }
   .clock-swatch { width:20px; height:20px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:transform 0.15s, border-color 0.2s; }
   .clock-swatch:hover { transform:scale(1.2); }
   .clock-swatch.active { border-color:var(--accent); }
@@ -124,10 +143,22 @@
   .clock-swatch.lavender { background:linear-gradient(135deg,#f0edf8 50%,#5b3db5 50%); }
   .clock-swatch.dusk     { background:linear-gradient(135deg,#9ca3af 50%,#374151 50%); }
 
-  .divider { width:1px; height:16px; background:var(--border); }
-
-  .reset-btn { background:transparent; border:1px solid var(--border); border-radius:8px; padding:6px 16px; color:var(--muted); cursor:pointer; font-family:'DM Sans',sans-serif; font-size:12px; transition:all 0.2s; }
+  .reset-btn { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:6px 16px; color:var(--muted); cursor:pointer; font-family:'DM Sans',sans-serif; font-size:12px; transition:all 0.2s; white-space:nowrap; }
   .reset-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+  /* ── RESPONSIVE: stack columns on narrow screens ── */
+  @media (max-width: 900px) {
+    .clock-screen-grid { flex-direction:column; align-items:stretch; }
+    .col-left, .col-right { flex:none; }
+    .time-cards { flex-direction:row; }
+    .notes-box { min-height:120px; }
+    .col-left { justify-content:flex-start; }
+    .left-spacer { flex:0 0 20px; }
+    .left-controls { align-items:center; margin-top:20px; }
+  }
+  @media (max-width: 560px) {
+    .time-cards { flex-direction:column; }
+  }
 </style>
 </head>
 <body class="theme-paper">
@@ -165,48 +196,64 @@
 
 <!-- CLOCK SCREEN -->
 <div id="clock-screen">
-  <div class="exam-title" id="display-title"></div>
-  <div class="time-cards">
-    <div class="time-card start">
-      <div class="card-label">Start Time</div>
-      <div class="card-time" id="display-start">--:--</div>
-      <div class="card-sub">Exam begins</div>
-    </div>
-    <div class="time-card now">
-      <div class="card-label">Current Time</div>
-      <div class="card-time" id="display-now">--:--:--</div>
-      <div class="card-sub">Right now</div>
-    </div>
-    <div class="time-card end">
-      <div class="card-label">End Time</div>
-      <div class="card-time" id="display-end">--:--</div>
-      <div class="card-sub">Pencils down</div>
-    </div>
-  </div>
+  <div class="clock-screen-grid">
 
-  <div class="clock-wrap">
-    <canvas id="analog-clock" width="440" height="440"></canvas>
-  </div>
+    <!-- COL 1: time cards (centered) + controls (bottom-anchored) -->
+    <div class="col col-left">
+      <div class="left-spacer"></div>
+      <div class="time-cards">
+        <div class="time-card start">
+          <div class="card-label">Start Time</div>
+          <div class="card-time" id="display-start">--:--</div>
+          <div class="card-sub">Exam begins</div>
+        </div>
+        <div class="time-card now">
+          <div class="card-label">Current Time</div>
+          <div class="card-time" id="display-now">--:--:--</div>
+          <div class="card-sub">Right now</div>
+        </div>
+        <div class="time-card end">
+          <div class="card-label">End Time</div>
+          <div class="card-time" id="display-end">--:--</div>
+          <div class="card-sub">Pencils down</div>
+        </div>
+      </div>
+      <div class="left-spacer"></div>
 
-  <!-- Traffic light -->
-  <div class="traffic-light-wrap">
-    <div class="traffic-light">
-      <div class="light red-light off"    id="light-red"></div>
-      <div class="light yellow-light off" id="light-yellow"></div>
-      <div class="light green-light off"  id="light-green"></div>
+      <div class="left-controls">
+        <div class="bottom-row">
+          <div class="clock-swatch paper active"  onclick="setTheme('paper')"></div>
+          <div class="clock-swatch sky"           onclick="setTheme('sky')"></div>
+          <div class="clock-swatch mint"          onclick="setTheme('mint')"></div>
+          <div class="clock-swatch lavender"      onclick="setTheme('lavender')"></div>
+          <div class="clock-swatch dusk"          onclick="setTheme('dusk')"></div>
+        </div>
+        <button class="reset-btn" onclick="resetClock()">← New Exam</button>
+      </div>
     </div>
-    <div class="traffic-label" id="traffic-label">Waiting to start</div>
-  </div>
 
-  <!-- Subtle bottom row: tiny theme swatches + reset -->
-  <div class="bottom-row">
-    <div class="clock-swatch paper active"  onclick="setTheme('paper')"></div>
-    <div class="clock-swatch sky"           onclick="setTheme('sky')"></div>
-    <div class="clock-swatch mint"          onclick="setTheme('mint')"></div>
-    <div class="clock-swatch lavender"      onclick="setTheme('lavender')"></div>
-    <div class="clock-swatch dusk"          onclick="setTheme('dusk')"></div>
-    <div class="divider"></div>
-    <button class="reset-btn" onclick="resetClock()">← New Exam</button>
+    <!-- COL 2: title + clock + horizontal traffic light -->
+    <div class="col col-center">
+      <div class="exam-title" id="display-title"></div>
+      <div class="clock-wrap">
+        <canvas id="analog-clock" width="560" height="560"></canvas>
+      </div>
+      <div class="traffic-light-wrap">
+        <div class="traffic-light">
+          <div class="light red-light off"    id="light-red"></div>
+          <div class="light yellow-light off" id="light-yellow"></div>
+          <div class="light green-light off"  id="light-green"></div>
+        </div>
+        <div class="traffic-label" id="traffic-label">Waiting to start</div>
+      </div>
+    </div>
+
+    <!-- COL 3: notes -->
+    <div class="col col-right">
+      <div class="notes-label">Notes</div>
+      <textarea class="notes-box" id="notes-box"></textarea>
+    </div>
+
   </div>
 </div>
 
@@ -419,6 +466,7 @@ function drawHand(ctx, cx, cy, angle, length, tailLen, width, color) {
 
 function resetClock() {
   if (tickTimer) clearTimeout(tickTimer);
+  document.getElementById("notes-box").value = "";
   document.getElementById("clock-screen").style.display  = "none";
   document.getElementById("setup-screen").style.display  = "block";
 }
